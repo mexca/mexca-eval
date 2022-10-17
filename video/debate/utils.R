@@ -103,17 +103,24 @@ count_face_combination <- function(df){
 # write = T saves them in a txt file
 select_most_frequent_faces <- function(df, write = T, list_shots_path = 'list_shots.txt', 
                                        out_name = 'faces', n_unique_combinations = 1, 
-                                        balanced = F){
+                                        balanced = F, max_shots){
   
   df$face_combination <- paste0(df$face_1, df$face_2, df$face_3)
   most_frequent_faces <- count_face_combination(df)[1:n_unique_combinations,1]
-  faces <- df[df$face_combination %in% most_frequent_faces,]
+  faces <- df[df$face_combination %in% most_frequent_faces & df$faces_in_background != 1,]
   
-  n_least_frequent_faces <- min(count_face_combination(df)[1:n_unique_combinations,2])
+#  n_least_frequent_faces <- min(count_face_combination(faces)[1:n_unique_combinations,2])
+  n_least_frequent_faces <- max_shots
   
   if(balanced == T){ # if we want all faces to be displayed the same amount of time
     faces <- balance_dataset_by_frames(df = faces, n_least_frequent_faces)
+  } else {
+    faces <- faces[sample(nrow(faces), n_least_frequent_faces), ]
   }
+    
+    
+  
+  
   
   if(write == T){
     list_shots <- read.table(list_shots_path, header = F)
@@ -131,7 +138,7 @@ select_most_frequent_faces <- function(df, write = T, list_shots_path = 'list_sh
 }
 
 # make clip
-make_clip <- function(number_of_speakers = seq_len(3), camera_shots_annotation, contemporaries = T, n_unique_combination = 1){
+make_clip <- function(number_of_speakers = seq_len(3), camera_shots_annotation, contemporaries = T, n_unique_combination = 1, max_shots){
   
   if(contemporaries == T ){
     if(max(number_of_speakers)>3){
@@ -144,7 +151,7 @@ make_clip <- function(number_of_speakers = seq_len(3), camera_shots_annotation, 
       # make subsets based on the number of speakers
       subset_n_face <- subset_shots(camera_shots = camera_shots_annotation, n = speaker)
       # Count frequencies of sets of faces displayed per time point and select most frequent face combination
-      final_subset_faces <- select_most_frequent_faces(df = subset_n_face, write = T, list_shots_path = 'list_shots.txt', out_name, n_unique_combinations = 1, balanced = F)
+      final_subset_faces <- select_most_frequent_faces(df = subset_n_face, write = T, list_shots_path = 'list_shots.txt', out_name, n_unique_combinations = n_unique_combination, balanced = F, max_shots)
       # concatenate the selected shots 
       system(paste0("ffmpeg -f concat -safe 0 -i ", out_name,".txt -c copy ", out_name,".mp4"))
       
@@ -161,7 +168,7 @@ make_clip <- function(number_of_speakers = seq_len(3), camera_shots_annotation, 
       # make subsets based on the number of speakers
       subset_n_face <- subset_shots(camera_shots = camera_shots_annotation, n = 1)
       # Count frequencies of sets of faces displayed per time point and select most frequent face combination
-      final_subset_faces <- select_most_frequent_faces(df = subset_n_face, write = T, list_shots_path = 'list_shots.txt', out_name, n_unique_combinations = combination, balanced = T)
+      final_subset_faces <- select_most_frequent_faces(df = subset_n_face, write = T, list_shots_path = 'list_shots.txt', out_name, n_unique_combinations = combination, balanced = T, max_shots)
       # concatenate the selected shots 
       system(paste0("ffmpeg -f concat -safe 0 -i ", out_name,".txt -c copy ", out_name,".mp4"))
       

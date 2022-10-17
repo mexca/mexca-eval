@@ -2,8 +2,10 @@
 title: "Create ad-hoc dataset for mexca evaluation"
 author: "Eva Viviani"
 date: "2022-10-07"
-output: html_document
-editor_options: 
+output:
+  pdf_document: default
+  html_document: default
+editor_options:
   chunk_output_type: console
 ---
 
@@ -124,12 +126,12 @@ Note: For (1), we know from the `camera_shots_coding.csv` that the max number of
 
 This function below with `contemporaries = T` creates datasets for answering Q1, with number_of_speakers set to 3.
 ```{r Q1, eval=FALSE}
-make_clip(number_of_speakers = seq_len(3), annotations = camera_shots_annotation, contemporaries = T, n_unique_combinations = 1)
+make_clip(number_of_speakers = seq_len(3), camera_shots_annotation, contemporaries = T, n_unique_combination = 1, max_shots = 2)
 ```
 
 Function below answers Q2. However, it does by concatenating clips of 1 person, up to n_unique_combination. These unique combinations however are matched in terms of how long each face/speaker is displayed.
 ```{r Q2, eval=FALSE}
-make_clip(number_of_speakers = 1, camera_shots_annotation, contemporaries = F, n_unique_combination = 2:10) #note that starting from 1 makes a dataset equivalent to Q1
+make_clip(number_of_speakers = 1, camera_shots_annotation, contemporaries = F, n_unique_combination = 2:10, max_shots = 2) #note that starting from 1 makes a dataset equivalent to Q1
 
 ```
 
