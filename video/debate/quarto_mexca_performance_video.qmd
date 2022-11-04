@@ -1,0 +1,371 @@
+---
+title: "Mexca performance - video"
+author: "Eva Viviani"
+format: html
+editor: visual
+---
+
+```{r}
+#| echo: false
+rm(list = ls())
+source("utils.R")
+
+```
+
+Mexca's video subcomponent is based on [Py-feat](https://py-feat.org/pages/intro.html). Py-feat includes pre-trained models for Action Unit detection, emotion detection, Face and Landmark detection and identification.
+
+In this notebook, we evaluate mexca/Py-feat performance on face detection and identification. We aim at answering the following questions:
+
+-   Q1: Is performance affected by the number of faces in a video?
+
+-   Q2: Is performance influenced by how long one face is presented compared to the others?
+
+## The test dataset
+
+We have applied mexca's video pipeline on a dataset provided by the project partner. The dataset is made of excerpts of a video lasting \~1:44:00. The excerpts (named 'shots' in the annotation file) are \~ 1500 and last from 22 frames to over 1000 frames.
+
+From this dataset, we have created 10 videos lasting from 00:24 to 2:17 and featuring from 1 to 10 individuals.
+
+This is an example of a video featuring two individuals:
+
+```{r}
+embedr::embed_video('total/2_speaker_total.mp4')
+```
+
+The videos are build by selecting and concatenating shots of the most frequent individuals from 1 to 10, as reported by a human annotator in the reference file loaded below.
+
+```{r}
+camera_shots_annotation <- read.csv("camera_shots_annotation.csv", header = T)
+```
+
+Each shot is composed of a variable number of frames. The shots are all 25fps, thus a frame is 1/25 = `r 1/25`
+
+```{r}
+camera_shots_annotation |>
+  dplyr::group_by(filename) |>
+  dplyr::summarise(frames = mean(frames)) |>
+  dplyr::mutate(seconds = frames * 0.04) 
+  
+```
+
+The majority of the shots includes annotations of one single person at a time, and of max 3 individuals at a time:
+
+```{r}
+camera_shots_annotation$n_faces <- rowSums(!is.na(camera_shots_annotation[,c("face_1", "face_2", "face_3")]))
+
+table(camera_shots_annotation$n_faces)
+```
+
+We can answer Q1 by evaluating mexca's performance on videos featuring (1) individuals who are alone in the frame, or (2) are together with other people. From the annotation structure above, we know however that for (2) we can evaluate the performance for min = 2 to max = 3 people at a time only.
+
+Among all the individuals, we have excluded individuals who were not frequently annotated. This led us to have 10 people.
+
+```{r}
+sort(table(camera_shots_annotation$face_1), decreasing = T)
+
+```
+
+## Mexca's output
+
+We read in the relevant columns in mexca output which allow us to compute performance for face detection and identification.
+
+```{r}
+#| warning: false
+output_files <- list.files('output/with_n_clusters/')
+
+shot_df <- data.frame() 
+
+for(file in output_files){
+  ded21 <- read.csv(paste0("output/with_n_clusters/",file),stringsAsFactors = T, header = T, dec = ".", na.strings = ' ') 
+  ded21 <- ded21[,c("frame", "time","face_prob", "face_landmarks", "face_aus", "face_id")]
+  ded21 <- unpack_face_landmarks(ded21)
+  ded21 <- unpack_face_aus(ded21)
+  ded21 <- ded21 |> dplyr::filter_all(dplyr::any_vars(!is.na(.)))
+  ded21$file <- as.factor(file); 
+  
+  shot_df <- dplyr::bind_rows(shot_df, ded21)
+}
+
+shot_df <- unique(shot_df)
+
+head(shot_df[,c("frame","time","face_id","face_prob","file")])
+
+```
+
+We add to mexca's output the column `shot_id` and `filename` indicating the shots that made each video in the file/`video_name` column. Moreover, we also add in the column `n` the order in which the shots were concatenated. This info is useful in order to understand who was displayed when.
+
+```{r}
+input_files <- c(list.files('total', full.names = T), list.files('contemporary', full.names = T))
+input_files <- input_files[grepl('.txt', input_files)]
+input_files <- input_files[!grepl('3_speaker_contemporary.txt|2_speaker_contemporary.txt', input_files)]
+
+final <- data.frame()
+
+for(file in input_files){
+  shot_numbers <- NULL
+  file_names <- NULL
+  input <- read.csv(file, header = F) 
+  shot_numbers_ <- regmatches(input$V1, gregexpr("[[:digit:]]+", input$V1))
+  file_names <- append(file_names, paste0(gsub("contemporary/|total/|.txt","",file),".csv"))
+  for (i in 1:length(shot_numbers_)){
+    shot_numbers <- append(shot_numbers, shot_numbers_[[i]][2])
+  }
+  temp <- data.frame(video_name = file_names, shot_id = shot_numbers, 
+                     filename = paste0('camera shots_Sub_',shot_numbers),
+                     n = 1:length(shot_numbers_))
+  final <- rbind(final, temp); rm(temp)
+}
+
+final$video_name <- as.factor(final$video_name); final$shot_id <- as.integer(final$shot_id); final$filename <- as.factor(final$filename)
+summary(final)
+
+```
+
+Adding the `filename` and `shot_id` columns allow us to merge the annotation file with the info abour mexca's video. We save this new annotation dataframe as `video_annotation`.
+
+```{r}
+video_annotation <-merge(camera_shots_annotation, final, by = c('filename', 'shot_id'))
+video_annotation <- video_annotation[,c('filename','n','face_1','face_2','face_3','b_frame','duration','end_frame','video_name', 'frames')]
+head(video_annotation)
+```
+
+We now have a long dataframe format, however for our analysis is easier to handle a wide format, so we change it to get a row frame by frame. This is how it looks like now:
+
+```{r}
+video_annotation_wide <- pivot_wider_video_annotation(video_annotation)
+head(video_annotation_wide[,c("filename","face_1","frame")])
+```
+
+The names of the people displayed in the video are in the `face_1` column. These are character strings of the real names of the dutch politicians within the video. Mexca, however, won't know their real name, and will label them with numbers going from 0 (i.e., 1 person) to 9 (i.e., 10 people).
+
+How can we establish the correspondence between the labels given by the model (i.e., the numbers) and the labels given by the human annotator?
+
+We solve this [assignment problem](https://en.wikipedia.org/wiki/Assignment_problem) by first using the custom made `add_face_id_to_reference` function to convert all names within video file into its corresponding number (e.g., in the video with two speakers, Rutte and Klaver will be 0 and 1, respectively). We append this info in the `face_label` column.
+
+```{r}
+video_annotation_wide_labeled <- add_face_id_to_reference(video_annotation_wide)
+head(video_annotation_wide_labeled[,c("filename","face_1","frame","face_label")])
+
+```
+
+We then now use the custom made `minMatching` function to find the optimal mapping between the integer labels from the reference and the integer labels from the model. The optimal mapping is done by the function `lp.assign` of the `lpSolve` package which has been designed specifically for solving assignment problems between integer vectors. Under the hood, it implements a variation of the [hungarian method](https://en.wikipedia.org/wiki/Hungarian_algorithm).
+
+Once found the optimal match, we store the reference's mapping that best match the mexca's mapping (column `face_id`) into the column `mapped_reference`. We save this new file as `mexca_opt_mapping`.
+
+```{r}
+#simplify mexca's output by selecting only the relevant columns
+colnames(shot_df)[colnames(shot_df)=="file"] <- 'video_name'
+mexca_video_output <- shot_df[,c('frame','face_id','video_name')]
+
+merge(video_annotation_wide_labeled, na.omit(mexca_video_output), by = c("video_name", "frame"), all = FALSE) -> temp
+
+unique(temp$video_name) -> videos
+
+mexca_opt_mapping <- NULL
+for (video in videos){
+  sub_temp <- droplevels(temp[temp$video_name == video,])
+  mapping <- minMatching(reference = sub_temp$face_label,
+                         model = sub_temp$face_id)
+  # init the column
+  sub_temp$mapped_reference <- -1
+  optimal_labels <- colnames(mapping)[max.col(mapping, "first")]
+  
+  for(x in 1:length(optimal_labels)){
+    
+    sub_temp[sub_temp$face_label == x-1 ,]$mapped_reference <- optimal_labels[x] 
+    
+  }
+  mexca_opt_mapping <- dplyr::bind_rows(mexca_opt_mapping, sub_temp)
+}
+
+mexca_opt_mapping$mapped_reference <- as.factor(mexca_opt_mapping$mapped_reference)
+head(mexca_opt_mapping[, c("video_name","face_1","face_id","mapped_reference")])
+```
+
+We are now ready to compute our performance scores. We are mainly interested in the [f1 score](https://en.wikipedia.org/wiki/F-score) per individual, but we will also get the total accuracy per video. In R, the `caret` package takes care of computing these metrics, and so we will be using it. Note that for the video whereby there is only 1 speaker, the f1 score will be equivalent to the Accuracy score (i.e., they are synonyms) and it will inevitably be 1 (i.e., 100% accuracy). For the video with two speakers, we will get only 1 f1 score, as the classification is binary (i.e., either 0 or 1). We will get multiple f1_scores per individual from n \> 3. We save these results into one single file named `video_performance`.
+
+```{r}
+videos <- unique(mexca_opt_mapping$video_name)
+video_performance <- NULL
+
+for(video in videos){
+  sub_video <- droplevels(mexca_opt_mapping[mexca_opt_mapping$video_name == video,]) 
+  mapping <- as.data.frame(table(sub_video$face_1, sub_video$mapped_reference))
+  mapping <- subset(mapping, Freq >1)
+  colnames(mapping) <- c("true_label","mapped_ref","Freq")
+  mapping <- mapping[,c("true_label","mapped_ref")]
+  
+  result <- caret::postResample(pred = as.factor(sub_video$mapped_reference), obs = as.factor(sub_video$face_id))
+  f1_by_speaker <- NULL
+  if(!(video %in% c("2_speaker_total.csv",  "1_speaker_contemporary.csv"))){
+    f1_by_speaker <- caret::confusionMatrix(as.factor(sub_video$face_id), as.factor(sub_video$mapped_reference), mode = "prec_recall")$byClass[,"F1"]
+    
+    names(f1_by_speaker)[which(names(f1_by_speaker) == paste0("Class: ",mapping$mapped_ref))] <- as.character(mapping$true_label)
+    
+  }
+  
+  result <- as.data.frame(result) |> 
+    tibble::rownames_to_column("score") |>
+    tidyr::pivot_wider( names_from = score, values_from = result)
+  
+  if(!is.null(f1_by_speaker)){
+    result <- dplyr::bind_cols(result, f1_by_speaker)
+    result$speaker <- names(f1_by_speaker)
+    colnames(result)[3] <- "f1_score"
+    
+  }
+  result$video_name <- video
+  video_performance <- dplyr::bind_rows(video_performance, result)
+  
+}
+
+video_performance[video_performance$video_name == "1_speaker_contemporary.csv",]$speaker <- "Rutte"
+video_performance[video_performance$video_name == "1_speaker_contemporary.csv",]$f1_score <- 1
+
+video_performance[video_performance$video_name == "2_speaker_total.csv",]$speaker <- "Klaver"
+video_performance[video_performance$video_name == "2_speaker_total.csv",]$f1_score <- unique(video_performance[video_performance$video_name == "2_speaker_total.csv",]$Accuracy)
+
+video_performance <- video_performance |>
+  dplyr::add_row(Accuracy = video_performance[video_performance$video_name == "2_speaker_total.csv",]$Accuracy,
+                 Kappa = video_performance[video_performance$video_name == "2_speaker_total.csv",]$Kappa,
+                 video_name = "2_speaker_total.csv",
+                 f1_score = unique(video_performance[video_performance$video_name == "2_speaker_total.csv",]$Accuracy),
+                 speaker = "Rutte")
+
+head(video_performance)
+
+```
+
+At this point we're ready to add these metrics to mexca's video performance dataframe. This way we will get the metrics, the n of speakers and the n of frames they are presented all in the same dataframe.
+
+```{r}
+table_frames <- aggregate(frames ~ video_name + face_1, data = mexca_opt_mapping, unique)
+table_frames$tot_frames <- table_frames$frames[,1] + table_frames$frames[,2] 
+colnames(table_frames)[colnames(table_frames) == "face_1"] <- "speaker"
+
+mexca_video_performance <- dplyr::left_join(video_performance, table_frames[,c("video_name","speaker","tot_frames")], by = c("video_name","speaker"))
+mexca_video_performance <- mexca_video_performance |>
+  dplyr::group_by(video_name) |>
+  dplyr::mutate(n = dplyr::n())
+
+mexca_video_performance <- na.omit(mexca_video_performance) #there are na's for those individuals that mexca did not find
+head(mexca_video_performance)
+```
+
+We're ready now to analyse our results.
+
+### f1 score distribution
+
+```{r}
+ggplot2::ggplot(mexca_video_performance, ggplot2::aes(as.factor(n), f1_score)) +
+  ggplot2::geom_violin(fill = "lightgray", col = NA) +
+  ggforce::geom_sina(shape = 21)+
+  ggplot2::scale_y_continuous(breaks=seq(0, 1, 0.2), limits=c(0, 1))+
+  ggplot2::ylab("f1 score") +
+  ggplot2::xlab("number of people displayed") +
+  ggplot2::geom_hline(yintercept = round(mean(mexca_video_performance$f1_score),2), linetype = "dashed", color = "red", size = 1) +
+  ggplot2::theme_classic()
+```
+
+### Partial residual plot
+
+We isolate the contribution of the `number of faces` and `frames` (i.e., how long a face is displayed) by combining the prediction based on a single predictor (columns: n, tot_frames) with the actual residual from the full regression equation. Note that because of the skewed distribution in the n. of frames, we use a polynomial regression.
+
+```{r}
+lm_ded21 <- lm(f1_score ~ n + poly(tot_frames, 3), data = mexca_video_performance)
+anova(lm_ded21)
+```
+
+```{r}
+terms <- predict(lm_ded21, type = "terms")
+partial_resid <- resid(lm_ded21) + terms # a partial residual is the ordinary residual plus the regression term associated with it
+
+df_n <- data.frame(
+  n = mexca_video_performance[, "n"],
+  Terms = terms[, "n"],
+  PartialResid = partial_resid[, "n"]
+  
+)
+
+df_frames <- data.frame(
+  n = mexca_video_performance[, "tot_frames"],
+  Terms = terms[, "poly(tot_frames, 3)"],
+  PartialResid = partial_resid[, "poly(tot_frames, 3)"]
+  
+)
+p <- list()
+p[[1]] <- ggplot2::ggplot(df_n, ggplot2::aes(n, PartialResid)) + 
+  ggplot2::geom_point(shape = 1) + 
+  ggplot2::scale_shape(solid = FALSE) +
+  ggplot2::geom_smooth(linetype = 2) +
+  ggplot2::geom_line(ggplot2::aes(n, Terms)) +
+  ggplot2::labs(title="number of speakers")
+
+p[[2]] <- ggplot2::ggplot(df_frames, ggplot2::aes(tot_frames, PartialResid)) + 
+  ggplot2::geom_point(shape = 1) + 
+  ggplot2::scale_shape(solid = FALSE) +
+  ggplot2::geom_smooth(linetype = 2) +
+  ggplot2::geom_line(ggplot2::aes(tot_frames, Terms)) +
+  ggplot2::labs(title="number of frames") 
+
+
+do.call(gridExtra::grid.arrange,p) 
+```
+
+### Confusion matrices
+
+```{r}
+x <- unique(mexca_opt_mapping$video_name)
+x <- x[gtools::mixedorder(as.character(x))]
+
+p <- list()
+
+for(i in 1:length(x)){
+  sub_video <- droplevels(mexca_opt_mapping[mexca_opt_mapping$video_name == x[i],]) 
+  mapping <- as.data.frame(table(sub_video$face_1, sub_video$mapped_reference))
+  mapping <- subset(mapping, Freq >1)
+  colnames(mapping) <- c("true_label","mapped_ref","Freq")
+  mapping <- mapping[,c("true_label","mapped_ref")]
+  confusion_matrix <- as.matrix(table(sub_video$face_id, sub_video$mapped_reference))
+  colnames(confusion_matrix)[which(colnames(confusion_matrix) == mapping$mapped_ref)] <- as.character(mapping$true_label)
+  rownames(confusion_matrix)[which(rownames(confusion_matrix) == mapping$mapped_ref)] <- as.character(mapping$true_label)
+  
+  p[[i]]<- confusion_matrix|>
+    as.data.frame()|>
+    ggplot2::ggplot(ggplot2::aes(Var1, Var2, fill = Freq)) + 
+    ggplot2::geom_tile(
+      colour = "white",
+      lwd = 0.1,
+      linetype = 1) +
+    ggplot2::geom_text(ggplot2::aes(label = round(Freq,1))) +
+    ggplot2::scale_fill_gradient(low="white", high="#009194")+
+    ggplot2::coord_fixed()+
+    ggplot2::guides(fill = ggplot2::guide_colourbar(title = "Frames"))+
+    ggplot2::ylab("True speaker label")+
+    ggplot2::xlab("Predicted speaker label")+
+    ggplot2::labs(title = paste0("n = ", i), caption="Dutch debate dataset 2021")+
+    ggplot2::theme(legend.position="right")
+  
+}
+
+```
+
+```{r, figures-side, fig.ncol = 2, out.height="300px"}
+
+for(i in 1:10){
+  print(p[[i]])
+}
+
+```
+
+## Q1: Is performance affected by the number of faces in a video?
+
+`Answer:` No. Performance is constant across speakers (i.e., it is not influenced by n).
+
+## Q2: Is performance influenced by how long one face is presented compared to the others?
+
+`Answer`: Yes. Performance is variable for very short segments (i.e., \<100 frames, less than 4s) but it reaches a plateau from 250 frames (i.e., 10s).
+
+`Conclusion:` Our results suggest that the video pipeline can be safely used for any number of speaker (up to the tested number of 10) without decreasing in performance, as long as they speak for at least 12s.
+
+### 
