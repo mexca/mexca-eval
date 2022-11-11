@@ -9,12 +9,17 @@ editor: visual
 #| echo: false
 rm(list = ls())
 source("utils.R")
-
 ```
 
-Mexca's video subcomponent is based on [Py-feat](https://py-feat.org/pages/intro.html). Py-feat includes pre-trained models for Action Unit detection, emotion detection, Face and Landmark detection and identification.
+```{r}
+#| echo: false
 
-In this notebook, we evaluate mexca/Py-feat performance on face detection and identification. We aim at answering the following questions:
+library(ggpubr)
+```
+
+Mexca's video subcomponent is based on [Py-feat](https://py-feat.org/pages/intro.html) and [facenet-pytorch](https://github.com/timesler/facenet-pytorch). Py-feat includes pre-trained models for Action Unit detection and emotion detection. Pytorch includes a pretrained model for face detection and identification.
+
+In this notebook, we evaluate mexca/Pytorch performance on face detection and identification. We aim at answering the following questions:
 
 -   Q1: Is performance affected by the number of faces in a video?
 
@@ -256,60 +261,27 @@ We're ready now to analyse our results.
 
 ### f1 score distribution
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 ggplot2::ggplot(mexca_video_performance, ggplot2::aes(as.factor(n), f1_score)) +
   ggplot2::geom_violin(fill = "lightgray", col = NA) +
   ggforce::geom_sina(shape = 21)+
   ggplot2::scale_y_continuous(breaks=seq(0, 1, 0.2), limits=c(0, 1))+
   ggplot2::ylab("f1 score") +
   ggplot2::xlab("number of people displayed") +
-  ggplot2::geom_hline(yintercept = round(mean(mexca_video_performance$f1_score),2), linetype = "dashed", color = "red", size = 1) +
-  ggplot2::theme_classic()
+  ggplot2::theme_classic() +
+  stat_summary(fun.data="mean_cl_boot", color="red")
 ```
 
-### Partial residual plot
+```{r, message=FALSE}
 
-We isolate the contribution of the `number of faces` and `frames` (i.e., how long a face is displayed) by combining the prediction based on a single predictor (columns: n, tot_frames) with the actual residual from the full regression equation. Note that because of the skewed distribution in the n. of frames, we use a polynomial regression.
-
-```{r}
-lm_ded21 <- lm(f1_score ~ n + poly(tot_frames, 3), data = mexca_video_performance)
-anova(lm_ded21)
-```
-
-```{r}
-terms <- predict(lm_ded21, type = "terms")
-partial_resid <- resid(lm_ded21) + terms # a partial residual is the ordinary residual plus the regression term associated with it
-
-df_n <- data.frame(
-  n = mexca_video_performance[, "n"],
-  Terms = terms[, "n"],
-  PartialResid = partial_resid[, "n"]
-  
-)
-
-df_frames <- data.frame(
-  n = mexca_video_performance[, "tot_frames"],
-  Terms = terms[, "poly(tot_frames, 3)"],
-  PartialResid = partial_resid[, "poly(tot_frames, 3)"]
-  
-)
-p <- list()
-p[[1]] <- ggplot2::ggplot(df_n, ggplot2::aes(n, PartialResid)) + 
-  ggplot2::geom_point(shape = 1) + 
-  ggplot2::scale_shape(solid = FALSE) +
-  ggplot2::geom_smooth(linetype = 2) +
-  ggplot2::geom_line(ggplot2::aes(n, Terms)) +
-  ggplot2::labs(title="number of speakers")
-
-p[[2]] <- ggplot2::ggplot(df_frames, ggplot2::aes(tot_frames, PartialResid)) + 
-  ggplot2::geom_point(shape = 1) + 
-  ggplot2::scale_shape(solid = FALSE) +
-  ggplot2::geom_smooth(linetype = 2) +
-  ggplot2::geom_line(ggplot2::aes(tot_frames, Terms)) +
-  ggplot2::labs(title="number of frames") 
-
-
-do.call(gridExtra::grid.arrange,p) 
+ggplot2::ggplot(mexca_video_performance, ggplot2::aes(tot_frames, f1_score)) +
+  ggplot2::geom_point(shape = 21, size = 4)+
+  ggplot2::scale_y_continuous(breaks=seq(0, 1, 0.2), limits=c(0, 1))+
+  ggplot2::scale_x_continuous(breaks=seq(100, 1402, 100), limits=c(100, 1402))+
+  ggplot2::ylab("f1 score") +
+  ggplot2::xlab("n of frames") +
+  ggplot2::theme_classic() +
+  ggplot2::geom_smooth(se = FALSE, colour = "black", linetype = 2)
 ```
 
 ### Confusion matrices
