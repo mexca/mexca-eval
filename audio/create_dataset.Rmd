@@ -1,0 +1,104 @@
+---
+title: "Create ad-hoc dataset for mexca evaluation"
+author: "Eva Viviani"
+date: "2022-10-07"
+output:
+  pdf_document: default
+  html_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+rm(list = ls())
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(dplyr)
+library(gtools)
+library(stringr)
+```
+
+### Read speaking_turns.csv
+
+The file 'speaking_turns.csv' contains the annotation of the speakers in the video 'ded21_video.mp4'. The video is 1:44:06 min long. 25 fps. 
+
+```{r read annotations, echo=TRUE}
+ref_rttmFile <- bind_rows(read.table(paste0("ref_ded21_audio_0.rttm"),stringsAsFactors = T, header = F, sep = " ", dec = ".", na.strings = ""),
+                          read.table(paste0("ref_ded21_audio_1.rttm"),stringsAsFactors = T, header = F, sep = " ", dec = ".", na.strings = ""))
+ref_rttmFile$V10 <- NULL
+colnames <- c("type", "file", "chnl", "tbeg", "tdur", 
+              "ortho", "stype", "name", "conf")
+
+names(ref_rttmFile) <- colnames
+ref_rttmFile$tend <- ref_rttmFile$tbeg + ref_rttmFile$tdur
+ref_rttmFile$audio_file <- paste0("ded21_audio_", substr(ref_rttmFile$file,37,37))
+```
+
+```{r head of camera shots, echo=TRUE}
+head(ref_rttmFile)
+```
+
+Load custom functions
+```{r}
+source("audio_utils.R")
+```
+
+We have only 7 speakers in the annotation. This is the distribution of speech duration per speaker:
+
+```{r}
+aggregate(tdur ~ name, data = ref_rttmFile, sum)
+```
+
+We can therefore make datasets that go from 1 to 7 speakers only.
+In the balanced dataset, all speakers speak for the same time duration. In the unbalanced dataset, speakers' speech duration follows an exponential distribution.
+
+```{r}
+n <- seq_len(length(unique(ref_rttmFile$name)))
+max_duration <- c(40, 60, 120, 180, 300, 480, 600)
+
+balanced_dataset <- NULL
+unbalanced_dataset <- NULL
+dir.create("output_wav")
+
+for(n_ in n){
+  for(t in max_duration){
+    balanced_dataset <- bind_rows(balanced_dataset, make_wav(number_of_speakers = n_, audio_annotation = ref_rttmFile, max_duration = t, balanced = T, outfolder = "output_wav"))
+    unbalanced_dataset <- bind_rows(unbalanced_dataset, make_wav(number_of_speakers = n_, audio_annotation = ref_rttmFile, max_duration = t, balanced = F, outfolder = "output_wav"))
+  }
+}
+
+write.csv(balanced_dataset, "balanced_dataset.csv", row.names = F, quote = F)
+write.csv(unbalanced_dataset, "unbalanced_dataset.csv", row.names = F, quote = F)
+
+```
+
+```{r}
+datasets <- list(balanced_dataset, unbalanced_dataset)
+
+for(x in 1:length(datasets)){
+  split_select_wav(wav_dataset = datasets[[x]])
+}
+
+```
+
+```{r}
+concatenate_wav(speakers_names = unique(ref_rttmFile$name), 
+                n = seq_len(length(unique(ref_rttmFile$name))),
+                max_duration = c(40, 60, 120, 180, 300, 480, 600),
+                balance = F)
+
+concatenate_wav(speakers_names = unique(ref_rttmFile$name), 
+                n = seq_len(length(unique(ref_rttmFile$name))),
+                max_duration = c(40, 60, 120, 180, 300, 480, 600),
+                balance = T)
+
+
+```
+
+```{r}
+colab_path <- list.files(file.path(getwd(), "output_wav", "unbalanced"))
+write.csv(paste0("/content/",colab_path), "list_audio_.txt", row.names = F, quote = F)
+```
+
