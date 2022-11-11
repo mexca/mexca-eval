@@ -1,0 +1,5 @@
+SPEAKER_00 Burger list_audio_5_180_unbalanced
+SPEAKER_01 Marijnissen list_audio_5_180_unbalanced
+SPEAKER_02 Klaver list_audio_5_180_unbalanced
+SPEAKER_03 Wilders list_audio_5_180_unbalanced
+SPEAKER_04 Rutte list_audio_5_180_unbalanced

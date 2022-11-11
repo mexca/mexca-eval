@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Mexca performance - audio</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="quarto_mexca_performance_diarization_files/libs/clipboard/clipboard.min.js"></script>
+<script src="quarto_mexca_performance_diarization_files/libs/quarto-html/quarto.js"></script>
+<script src="quarto_mexca_performance_diarization_files/libs/quarto-html/popper.min.js"></script>
+<script src="quarto_mexca_performance_diarization_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="quarto_mexca_performance_diarization_files/libs/quarto-html/anchor.min.js"></script>
+<link href="quarto_mexca_performance_diarization_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="quarto_mexca_performance_diarization_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="quarto_mexca_performance_diarization_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="quarto_mexca_performance_diarization_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="quarto_mexca_performance_diarization_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Mexca performance - audio</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<p>Mexca’s video subcomponent is based on <a href="https://github.com/pyannote/pyannote-audio">Pyannote.audio 2.0</a>. An open-source toolkit written in Python for speaker diarization. Pyannote.audio is based on PyTorch machine learning framework, and it comes with <a href="https://huggingface.co/pyannote/speaker-diarization">pre-trained models</a> for speaker diarization, which we have used here.</p>
+<p>In this notebook, we evaluate mexca/Pyannote performance on speaker diarization (who speaks when). We aim at answering the following questions:</p>
+<ul>
+<li><p>Q1: Is performance affected by the number of speakers in a clip?</p></li>
+<li><p>Q2: Is performance influenced by how long one speaks compared to the others?</p></li>
+</ul>
+<div class="cell">
+
+</div>
+<div class="cell">
+
+</div>
+<section id="the-test-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="the-test-dataset">The test dataset</h2>
+<p>We have applied mexca’s audio pipeline on 42 audio files lasting from ~50 seconds to ~20 min and ranging from 2 to 7 individuals (the max number of speakers reported in the annotation file).</p>
+<p>The audio files are made by selecting and concatenating audio files for each single speaker up to the max decided number.</p>
+<p>This is an example of an audio featuring two individuals:</p>
+<div class="cell">
+<div class="cell-output-display">
+<audio controls=""> <source src="output_wav/unbalanced/list_audio_2_60_unbalanced.wav" type="audio/mpeg"> Your browser does not support the audio tag;  for browser support, please see:  https://www.w3schools.com/tags/tag_audio.asp </audio>
+</div>
+</div>
+<p>To better investigate whether the <strong>duration</strong> of the <strong>speaking</strong> <strong>time</strong> of each <strong>speaker</strong> would affect performance, speakers’ speaking duration is manipulated to follow an exponential distribution.</p>
+<p>For example, in this file we have 7 speakers, and the max duration for the speaker who speaks the most is ~600s (10min).</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Here we have the opposite extreme: 2 speakers, max duration ~40s</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="read-mexcas-output" class="level2">
+<h2 class="anchored" data-anchor-id="read-mexcas-output">Read mexca’s output</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="fu">file.path</span>(<span class="st">"output_mexca"</span>)) </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>ded21 <span class="ot">&lt;-</span> <span class="fu">do.call</span>(bind_rows, <span class="fu">lapply</span>(<span class="fu">file.path</span>(<span class="st">"output_mexca"</span>, df), read.table, <span class="at">stringsAsFactors =</span> T, <span class="at">header =</span> F, <span class="at">sep =</span> <span class="st">" "</span>, <span class="at">dec =</span> <span class="st">"."</span>))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>ded21<span class="sc">$</span>V10 <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>colnames <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"type"</span>, <span class="st">"file"</span>, <span class="st">"chnl"</span>, <span class="st">"tbeg"</span>, <span class="st">"tdur"</span>, </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>              <span class="st">"ortho"</span>, <span class="st">"stype"</span>, <span class="st">"name"</span>, <span class="st">"conf"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(ded21) <span class="ot">&lt;-</span> colnames</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>ded21<span class="sc">$</span>max_duration <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(<span class="fu">str_split</span>(<span class="at">pattern =</span> <span class="st">"_"</span>, ded21<span class="sc">$</span>file, <span class="at">simplify =</span> T)[,<span class="dv">4</span>])</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>ded21<span class="sc">$</span>n_speaker <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(<span class="fu">str_split</span>(<span class="at">pattern =</span> <span class="st">"_"</span>, ded21<span class="sc">$</span>file, <span class="at">simplify =</span> T)[,<span class="dv">3</span>])</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ded21)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     type                        file chnl   tbeg    tdur ortho stype
+1 SPEAKER list_audio_2_120_unbalanced    1  0.498  81.996  &lt;NA&gt;  &lt;NA&gt;
+2 SPEAKER list_audio_2_120_unbalanced    1 49.283   3.139  &lt;NA&gt;  &lt;NA&gt;
+3 SPEAKER list_audio_2_120_unbalanced    1 53.097   3.864  &lt;NA&gt;  &lt;NA&gt;
+4 SPEAKER list_audio_2_120_unbalanced    1 81.245  27.979  &lt;NA&gt;  &lt;NA&gt;
+5 SPEAKER list_audio_2_180_unbalanced    1  0.498  29.768  &lt;NA&gt;  &lt;NA&gt;
+6 SPEAKER list_audio_2_180_unbalanced    1 30.873 173.070  &lt;NA&gt;  &lt;NA&gt;
+        name conf max_duration n_speaker
+1 SPEAKER_01 &lt;NA&gt;          120         2
+2 SPEAKER_00 &lt;NA&gt;          120         2
+3 SPEAKER_00 &lt;NA&gt;          120         2
+4 SPEAKER_00 &lt;NA&gt;          120         2
+5 SPEAKER_01 &lt;NA&gt;          180         2
+6 SPEAKER_01 &lt;NA&gt;          180         2</code></pre>
+</div>
+</div>
+</section>
+<section id="load-reference" class="level2">
+<h2 class="anchored" data-anchor-id="load-reference">Load reference</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ref_ded21 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"unbalanced_dataset.csv"</span>, <span class="at">header =</span> T, <span class="at">stringsAsFactors =</span> T)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># filter out n_speaker == 1 as diarization can't work with 1 speaker</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>ref_ded21 <span class="ot">&lt;-</span> ref_ded21[ref_ded21<span class="sc">$</span>n_speaker <span class="sc">!=</span> <span class="dv">1</span>,]</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ref_ded21)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      type                                       file chnl tbeg tdur ortho
+42 SPEAKER dutch-debate-corpus\\ref_ded21_audio_0.wav    1   41   32  &lt;NA&gt;
+43 SPEAKER dutch-debate-corpus\\ref_ded21_audio_1.wav    1 1362   16  &lt;NA&gt;
+44 SPEAKER dutch-debate-corpus\\ref_ded21_audio_0.wav    1   77   30  &lt;NA&gt;
+45 SPEAKER dutch-debate-corpus\\ref_ded21_audio_0.wav    1  109   33  &lt;NA&gt;
+46 SPEAKER dutch-debate-corpus\\ref_ded21_audio_0.wav    1   77   30  &lt;NA&gt;
+47 SPEAKER dutch-debate-corpus\\ref_ded21_audio_0.wav    1  381   44  &lt;NA&gt;
+   stype        name conf tend    audio_file max_duration n_speaker balanced
+42  &lt;NA&gt; Marijnissen &lt;NA&gt;   73 ded21_audio_0           40         2    FALSE
+43  &lt;NA&gt;      Burger &lt;NA&gt; 1378 ded21_audio_1           40         2    FALSE
+44  &lt;NA&gt;    Hoekstra &lt;NA&gt;  107 ded21_audio_0           60         2    FALSE
+45  &lt;NA&gt;        Kaag &lt;NA&gt;  142 ded21_audio_0           60         2    FALSE
+46  &lt;NA&gt;    Hoekstra &lt;NA&gt;  107 ded21_audio_0          120         2    FALSE
+47  &lt;NA&gt;    Hoekstra &lt;NA&gt;  425 ded21_audio_0          120         2    FALSE</code></pre>
+</div>
+</div>
+<section id="cast-reference-in-correct-time-frame" class="level3">
+<h3 class="anchored" data-anchor-id="cast-reference-in-correct-time-frame">Cast reference in correct time frame</h3>
+<p>Annotation’s time (<code>tbeg</code> column) is set to match the timing of the original video. We adjust this info to match mexca’s video files.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>n_speaker <span class="ot">&lt;-</span> <span class="fu">unique</span>(ref_ded21<span class="sc">$</span>n_speaker)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>max_duration <span class="ot">&lt;-</span> <span class="fu">unique</span>(ref_ded21<span class="sc">$</span>max_duration)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>ref_ded21_corpus <span class="ot">&lt;-</span> ref_ded21</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>reference_ded21_for_pyannote <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (n <span class="cf">in</span> n_speaker){</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(t <span class="cf">in</span> max_duration){</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># set first tbeg to 0</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    ref_ded21_corpus_temp <span class="ot">&lt;-</span> ref_ded21_corpus <span class="sc">|&gt;</span> </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(n_speaker <span class="sc">==</span> n <span class="sc">&amp;</span> max_duration <span class="sc">==</span> t) </span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>   ref_ded21_corpus_temp <span class="ot">&lt;-</span> ref_ded21_corpus_temp <span class="sc">|&gt;</span> </span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">tbeg =</span> <span class="fu">replace</span>(tbeg, <span class="dv">1</span>, <span class="dv">0</span>))</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    nrow_ref <span class="ot">&lt;-</span> <span class="fu">nrow</span>(ref_ded21_corpus_temp)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(x <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>nrow_ref) {</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>      <span class="co"># set tbeg from 2 row onwards tdur of the row before, i.e., tdur[x-1]</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>      ref_ded21_corpus_temp[x,]<span class="sc">$</span>tbeg <span class="ot">&lt;-</span> <span class="fu">sum</span>(ref_ded21_corpus_temp[x<span class="dv">-1</span>,]<span class="sc">$</span>tbeg,</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>                                            ref_ded21_corpus_temp[x<span class="dv">-1</span>,]<span class="sc">$</span>tdur) </span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    reference_ded21_for_pyannote <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(reference_ded21_for_pyannote,</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>                                              ref_ded21_corpus_temp)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="assign-speakers-optimal-mappings" class="level3">
+<h3 class="anchored" data-anchor-id="assign-speakers-optimal-mappings">Assign speakers’ optimal mappings</h3>
+<p>Mapping between mexca’s and reference’s labels is obtained by using pyannote’s optimal mapping algorithm. We stored it in the column ‘mapped reference’.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="fu">file.path</span>(<span class="st">"mexca_opt_mapping"</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>opt_mapping <span class="ot">&lt;-</span> <span class="fu">do.call</span>(bind_rows, <span class="fu">lapply</span>(<span class="fu">file.path</span>(<span class="st">"mexca_opt_mapping"</span>, df), read.table, <span class="at">stringsAsFactors =</span> T, <span class="at">header =</span> F, <span class="at">sep =</span> <span class="st">" "</span>, <span class="at">dec =</span> <span class="st">"."</span>))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(opt_mapping) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"pyannote_name"</span>, <span class="st">"mapped_reference"</span>, <span class="st">"file"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>opt_mapping<span class="sc">$</span>n_speaker <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(<span class="fu">str_split</span>(opt_mapping<span class="sc">$</span>file,<span class="st">"_"</span>, <span class="at">simplify =</span> T)[,<span class="dv">3</span>])</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>opt_mapping<span class="sc">$</span>max_duration <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(<span class="fu">str_split</span>(opt_mapping<span class="sc">$</span>file,<span class="st">"_"</span>, <span class="at">simplify =</span> T)[,<span class="dv">4</span>])</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(ded21)[<span class="fu">names</span>(ded21) <span class="sc">==</span> <span class="st">"name"</span>] <span class="ot">&lt;-</span> <span class="st">"pyannote_name"</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>optimal_ded21 <span class="ot">&lt;-</span> <span class="fu">left_join</span>(ded21, opt_mapping, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"file"</span>,<span class="st">"pyannote_name"</span>, <span class="st">"max_duration"</span>, <span class="st">"n_speaker"</span>))</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(optimal_ded21)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     type                        file chnl   tbeg    tdur ortho stype
+1 SPEAKER list_audio_2_120_unbalanced    1  0.498  81.996  &lt;NA&gt;  &lt;NA&gt;
+2 SPEAKER list_audio_2_120_unbalanced    1 49.283   3.139  &lt;NA&gt;  &lt;NA&gt;
+3 SPEAKER list_audio_2_120_unbalanced    1 53.097   3.864  &lt;NA&gt;  &lt;NA&gt;
+4 SPEAKER list_audio_2_120_unbalanced    1 81.245  27.979  &lt;NA&gt;  &lt;NA&gt;
+5 SPEAKER list_audio_2_180_unbalanced    1  0.498  29.768  &lt;NA&gt;  &lt;NA&gt;
+6 SPEAKER list_audio_2_180_unbalanced    1 30.873 173.070  &lt;NA&gt;  &lt;NA&gt;
+  pyannote_name conf max_duration n_speaker mapped_reference
+1    SPEAKER_01 &lt;NA&gt;          120         2         Hoekstra
+2    SPEAKER_00 &lt;NA&gt;          120         2           Klaver
+3    SPEAKER_00 &lt;NA&gt;          120         2           Klaver
+4    SPEAKER_00 &lt;NA&gt;          120         2           Klaver
+5    SPEAKER_01 &lt;NA&gt;          180         2      Marijnissen
+6    SPEAKER_01 &lt;NA&gt;          180         2      Marijnissen</code></pre>
+</div>
+</div>
+</section>
+<section id="compute-precision-recall-and-f1" class="level3">
+<h3 class="anchored" data-anchor-id="compute-precision-recall-and-f1">Compute precision, recall and f1</h3>
+<p>Now that we have the <code>mapped_reference</code> column, we can count how many times (in terms of speech segments overlap duration) the model has correctly or incorrectly predicted each speaker over its total speaking time.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># initialise file for plotting and matrix for storing confusion matrices</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>my2Dlist <span class="ot">&lt;-</span> <span class="fu">as.list</span>(<span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(n_speaker) <span class="sc">*</span> <span class="fu">length</span>(max_duration)))</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(my2Dlist) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">length</span>(n_speaker),<span class="fu">length</span>(max_duration))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>my_confusion_2d <span class="ot">&lt;-</span> <span class="fu">as.list</span>(<span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(n_speaker) <span class="sc">*</span> <span class="fu">length</span>(max_duration)))</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(my_confusion_2d) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">length</span>(n_speaker),<span class="fu">length</span>(max_duration))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(n_speaker)){</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> n_speaker[i]</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(max_duration)){</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    t <span class="ot">&lt;-</span> max_duration[j]</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    speaker_ref_segments <span class="ot">&lt;-</span> <span class="fu">droplevels</span>(</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>      reference_ded21_for_pyannote[reference_ded21_for_pyannote<span class="sc">$</span>n_speaker <span class="sc">==</span> n <span class="sc">&amp;</span> reference_ded21_for_pyannote<span class="sc">$</span>max_duration <span class="sc">==</span> t,]</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    speaker_pred_segments <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(<span class="fu">droplevels</span>(optimal_ded21[optimal_ded21<span class="sc">$</span>n_speaker <span class="sc">==</span> n <span class="sc">&amp;</span> optimal_ded21<span class="sc">$</span>max_duration <span class="sc">==</span> t,]))</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    reference_speakers <span class="ot">&lt;-</span> <span class="fu">unique</span>(speaker_ref_segments<span class="sc">$</span>name)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    confusion_matrix <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">table</span>(<span class="fu">levels</span>(reference_speakers), </span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>                                        <span class="fu">levels</span>(reference_speakers)))</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (ref_speaker1 <span class="cf">in</span> reference_speakers){</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>      sub_speaker_ref1 <span class="ot">&lt;-</span> speaker_ref_segments[speaker_ref_segments<span class="sc">$</span>name <span class="sc">==</span> ref_speaker1,]</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>      sub_speaker_pred1 <span class="ot">&lt;-</span> speaker_pred_segments[speaker_pred_segments<span class="sc">$</span>mapped_reference <span class="sc">==</span> ref_speaker1,]</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span>(ref_speaker2 <span class="cf">in</span> reference_speakers){</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>        sub_speaker_ref2 <span class="ot">&lt;-</span> speaker_ref_segments[speaker_ref_segments<span class="sc">$</span>name <span class="sc">==</span> ref_speaker2,]</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>        sub_speaker_pred2 <span class="ot">&lt;-</span> speaker_pred_segments[speaker_pred_segments<span class="sc">$</span>mapped_reference <span class="sc">==</span> ref_speaker2,]</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>        <span class="co"># compute speech segments overlap (in seconds) between mexca and the reference</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>        confusion_matrix[ref_speaker1,ref_speaker2] <span class="ot">&lt;-</span> <span class="fu">calculate_overlap</span>(sub_speaker_ref1, sub_speaker_pred2)</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>      <span class="co"># store matrix </span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>      my_confusion_2d[[i,j]] <span class="ot">&lt;-</span> confusion_matrix</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>      <span class="co"># store plot </span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>      my2Dlist[[i,j]] <span class="ot">&lt;-</span> confusion_matrix<span class="sc">|&gt;</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>        <span class="fu">as.data.frame</span>()<span class="sc">|&gt;</span></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ggplot</span>(ggplot2<span class="sc">::</span><span class="fu">aes</span>(Var1, Var2, <span class="at">fill =</span> Freq)) <span class="sc">+</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_tile</span>(</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>          <span class="at">colour =</span> <span class="st">"white"</span>,</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>          <span class="at">lwd =</span> <span class="fl">0.1</span>,</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>          <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(Freq,<span class="dv">1</span>))) <span class="sc">+</span></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>        <span class="fu">scale_fill_gradient</span>(<span class="at">low=</span><span class="st">"white"</span>, <span class="at">high=</span><span class="st">"#009194"</span>)<span class="sc">+</span></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>        <span class="fu">coord_fixed</span>()<span class="sc">+</span></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>        <span class="fu">guides</span>(<span class="at">fill =</span> <span class="fu">guide_colourbar</span>(<span class="at">title =</span> <span class="st">"seconds"</span>))<span class="sc">+</span></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ylab</span>(<span class="st">"True speaker label"</span>)<span class="sc">+</span></span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>        <span class="fu">xlab</span>(<span class="st">"Predicted speaker label"</span>)<span class="sc">+</span></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>        <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste0</span>(<span class="st">"n = "</span>, n, <span class="st">" max duration = "</span>, <span class="fu">max</span>(confusion_matrix), <span class="st">"s"</span> ),</span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>             <span class="at">caption=</span><span class="st">"Dutch debate dataset 2021"</span>)<span class="sc">+</span></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"right"</span>)</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>At this point we’re ready to compute the f1 score for each speaker, in each dataset, and store it in the <code>F1_total</code> dataframe.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>F1_total <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(my_confusion_2d)){ <span class="co">#n of speakers</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(my_confusion_2d)){ <span class="co"># max_duration</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    n <span class="ot">&lt;-</span> n_speaker[i]</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    t <span class="ot">&lt;-</span> max_duration[j]</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    speaker_ref_segments <span class="ot">&lt;-</span> <span class="fu">droplevels</span>(reference_ded21_for_pyannote[reference_ded21_for_pyannote<span class="sc">$</span>n_speaker <span class="sc">==</span> n <span class="sc">&amp;</span> reference_ded21_for_pyannote<span class="sc">$</span>max_duration <span class="sc">==</span> t,])</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    confusion_matrix <span class="ot">&lt;-</span> my_confusion_2d[[i,j]]</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    reference_speakers <span class="ot">&lt;-</span> <span class="fu">colnames</span>(confusion_matrix)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    F1 <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">speakers =</span> reference_speakers,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">max_duration =</span> <span class="cn">NA</span>,</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">f1_score =</span> <span class="cn">NA</span>,</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_speakers =</span> n,</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">file =</span> t</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (k <span class="cf">in</span> reference_speakers){</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>        F1[F1<span class="sc">$</span>speakers<span class="sc">==</span>k,]<span class="sc">$</span>f1_score <span class="ot">&lt;-</span> <span class="fu">compute_f1</span>(confusion_matrix, k)</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>        <span class="co"># append speakers' individual max duration</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>        F1[F1<span class="sc">$</span>speakers<span class="sc">==</span>k,]<span class="sc">$</span>max_duration <span class="ot">&lt;-</span> <span class="fu">sum</span>(speaker_ref_segments[speaker_ref_segments<span class="sc">$</span>name <span class="sc">==</span> k,]<span class="sc">$</span>tdur)</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>    F1_total <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(F1_total, F1)</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(F1_total)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     speakers max_duration  f1_score n_speakers file
+1      Burger           16 0.9642710          2   40
+2 Marijnissen           32 0.9813802          2   40
+3    Hoekstra           30 0.9988658          2   60
+4        Kaag           33 0.9989691          2   60
+5    Hoekstra           82 0.9518148          2  120
+6      Klaver           28 0.8683892          2  120</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="f1-score-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="f1-score-distribution">F1 score distribution</h2>
+<p>F1 score as a function of the number of speakers. Each dot is a speaker with its own speaking time duration (~40, ~60, ~120, ~180, ~300, ~480, ~600). F1 scores close to 0 imply perfect confusion, F1 scores close to 1 imply perfect identification.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(F1_total, <span class="fu">aes</span>(<span class="fu">as.factor</span>(n_speakers), f1_score))<span class="sc">+</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="at">fill =</span> <span class="st">"lightgray"</span>, <span class="at">col =</span> <span class="cn">NA</span>)<span class="sc">+</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sina</span>(<span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks=</span><span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.2</span>), <span class="at">limits=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))<span class="sc">+</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"f1 score"</span>)<span class="sc">+</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"number of people talking in total"</span>)<span class="sc">+</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun.data=</span><span class="st">"mean_cl_boot"</span>, <span class="at">color=</span><span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We can see that the performance is very high, and it looks constant across <code>n</code> except for some instances (10 speakers/datapoints).</p>
+<p>Let’s inspect more closely each speaker:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(F1_total, <span class="fu">aes</span>(<span class="fu">as.factor</span>(speakers), f1_score)) <span class="sc">+</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="at">fill =</span> <span class="st">"lightgray"</span>, <span class="at">col =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sina</span>(<span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"f1 score"</span>) <span class="sc">+</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"speaker"</span>) <span class="sc">+</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun.data=</span><span class="st">"mean_cl_boot"</span>, <span class="at">color=</span><span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>It is evident that the poor performance in those datapoints can be easily attributed to two speakers (Klaver and Wilders) and for 1 instance in Burger. Apart from Burger (that it might be just bad luck), this plot suggests that f1_score seems to be influenced more by the singular features of the speakers rather than the total number of speakers.</p>
+<p>Let’s look now at whether speaking time has any influence:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(F1_total, <span class="fu">aes</span>(<span class="fu">as.factor</span>(file), f1_score)) <span class="sc">+</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="at">fill =</span> <span class="st">"lightgray"</span>, <span class="at">col =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sina</span>(<span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"f1 score"</span>) <span class="sc">+</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"time(s)"</span>) <span class="sc">+</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun.data=</span><span class="st">"mean_cl_boot"</span>, <span class="at">color=</span><span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>F1 score decreases at longer speaking time.</p>
+</section>
+<section id="confusion-matrices" class="level2">
+<h2 class="anchored" data-anchor-id="confusion-matrices">Confusion matrices</h2>
+<div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a> <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(n_speaker)){</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>   <span class="cf">for</span>(x <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(max_duration)){</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>     <span class="fu">print</span>(my2Dlist[[i,x]])</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>   }</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a> }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-fig.ncol="3">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-4.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-5.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-6.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-7.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-8.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-9.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-10.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-11.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-12.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-13.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-14.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-15.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-16.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-17.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-18.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-19.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-20.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-21.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-22.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-23.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-24.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-25.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-26.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-27.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-28.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-29.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-30.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-31.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-32.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-33.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-34.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-35.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-36.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-37.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-38.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-39.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-40.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-41.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="quarto_mexca_performance_diarization_files/figure-html/figures-side-42.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="q1-is-performance-affected-by-the-number-of-speakers-in-the-audio" class="level2">
+<h2 class="anchored" data-anchor-id="q1-is-performance-affected-by-the-number-of-speakers-in-the-audio">Q1: Is performance affected by the number of speakers in the audio?</h2>
+<p><code>Answer:</code> No.&nbsp;Performance is constant across speakers (i.e., it is not influenced by n). When performance breaks down it doesn’t do it uniformly, the model occasionally fails to recognise particular speakers (e.g., Klaver) while the rest remain well classified.</p>
+</section>
+<section id="q2-is-performance-influenced-by-how-long-one-speak-compared-to-the-others" class="level2">
+<h2 class="anchored" data-anchor-id="q2-is-performance-influenced-by-how-long-one-speak-compared-to-the-others">Q2: Is performance influenced by how long one speak compared to the others?</h2>
+<p><code>Answer</code>: Yes. Performance decreases for speakers whose speaking time is over ~8 min.</p>
+<p><code>Conclusion:</code> Our results suggest that the audio pipeline can be safely used for any number of speaker (up to the tested number of 7) without decreasing in performance, however seems likely to be affected by how long one speaks compared to the others. To be sure though, one needs to analyse also a more balanced dataset (e.g., whereby each speaker speaks the same amount of time).</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

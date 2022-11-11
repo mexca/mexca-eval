@@ -1,0 +1,4 @@
+SPEAKER_00 Marijnissen list_audio_4_60_unbalanced
+SPEAKER_01 Hoekstra list_audio_4_60_unbalanced
+SPEAKER_02 Klaver list_audio_4_60_unbalanced
+SPEAKER_03 Rutte list_audio_4_60_unbalanced

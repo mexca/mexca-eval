@@ -1,0 +1,6 @@
+SPEAKER_00 Kaag list_audio_6_120_unbalanced
+SPEAKER_01 Burger list_audio_6_120_unbalanced
+SPEAKER_02 Wilders list_audio_6_120_unbalanced
+SPEAKER_03 Klaver list_audio_6_120_unbalanced
+SPEAKER_04 Hoekstra list_audio_6_120_unbalanced
+SPEAKER_05 Rutte list_audio_6_120_unbalanced

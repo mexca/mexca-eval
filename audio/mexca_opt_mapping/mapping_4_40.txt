@@ -1,0 +1,4 @@
+SPEAKER_00 Hoekstra list_audio_4_40_unbalanced
+SPEAKER_01 Klaver list_audio_4_40_unbalanced
+SPEAKER_02 Burger list_audio_4_40_unbalanced
+SPEAKER_03 Marijnissen list_audio_4_40_unbalanced

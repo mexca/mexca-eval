@@ -1,0 +1,5 @@
+SPEAKER_00 Klaver list_audio_5_40_unbalanced
+SPEAKER_01 Kaag list_audio_5_40_unbalanced
+SPEAKER_02 Marijnissen list_audio_5_40_unbalanced
+SPEAKER_03 Burger list_audio_5_40_unbalanced
+SPEAKER_04 Rutte list_audio_5_40_unbalanced
