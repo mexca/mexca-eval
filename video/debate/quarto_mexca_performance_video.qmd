@@ -338,6 +338,6 @@ for(i in 1:10){
 
 `Answer`: Yes. Performance is variable for very short segments (i.e., \<100 frames, less than 4s) but it reaches a plateau from 250 frames (i.e., 10s).
 
-`Conclusion:` Our results suggest that the video pipeline can be safely used for any number of speaker (up to the tested number of 10) without decreasing in performance, as long as they speak for at least 12s.
+`Conclusion:` Our results suggest that the video pipeline can be used for any number of speaker (up to the tested number of 10) without decreasing in performance, as long as they speak for at least 12s.
 
 ### 
