@@ -32,7 +32,7 @@ rm(list = ls())
 source("audio_utils.R")
 ```
 
-## The test dataset
+## The test dataset (unbalanced)
 
 We have applied mexca's audio pipeline on 42 audio files lasting from \~50 seconds to \~20 min and ranging from 2 to 7 individuals (the max number of speakers reported in the annotation file).
 
@@ -45,7 +45,7 @@ This is an example of an audio featuring two individuals:
 embed_audio("output_wav/unbalanced/list_audio_2_60_unbalanced.wav")
 ```
 
-To better investigate whether the **duration** of the **speaking** **time** of each **speaker** would affect performance, speakers' speaking duration is manipulated to follow an exponential distribution.
+To better investigate whether the **duration** of the **speaking** **time** of each **speaker** would affect performance, speakers' speaking duration is manipulated to follow an exponential distribution. For this reason, we refer to this dataset as **inbalanced**, i.e., speakers have different speaking time durations.
 
 For example, in this file we have 7 speakers, and the max duration for the speaker who speaks the most is \~600s (10min).
 

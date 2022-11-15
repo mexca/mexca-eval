@@ -129,8 +129,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 
 </div>
-<section id="the-test-dataset" class="level2">
-<h2 class="anchored" data-anchor-id="the-test-dataset">The test dataset</h2>
+<section id="the-test-dataset-unbalanced" class="level2">
+<h2 class="anchored" data-anchor-id="the-test-dataset-unbalanced">The test dataset (unbalanced)</h2>
 <p>We have applied mexca’s audio pipeline on 42 audio files lasting from ~50 seconds to ~20 min and ranging from 2 to 7 individuals (the max number of speakers reported in the annotation file).</p>
 <p>The audio files are made by selecting and concatenating audio files for each single speaker up to the max decided number.</p>
 <p>This is an example of an audio featuring two individuals:</p>
@@ -139,7 +139,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <audio controls=""> <source src="output_wav/unbalanced/list_audio_2_60_unbalanced.wav" type="audio/mpeg"> Your browser does not support the audio tag;  for browser support, please see:  https://www.w3schools.com/tags/tag_audio.asp </audio>
 </div>
 </div>
-<p>To better investigate whether the <strong>duration</strong> of the <strong>speaking</strong> <strong>time</strong> of each <strong>speaker</strong> would affect performance, speakers’ speaking duration is manipulated to follow an exponential distribution.</p>
+<p>To better investigate whether the <strong>duration</strong> of the <strong>speaking</strong> <strong>time</strong> of each <strong>speaker</strong> would affect performance, speakers’ speaking duration is manipulated to follow an exponential distribution. For this reason, we refer to this dataset as <strong>inbalanced</strong>, i.e., speakers have different speaking time durations.</p>
 <p>For example, in this file we have 7 speakers, and the max duration for the speaker who speaks the most is ~600s (10min).</p>
 <div class="cell">
 <div class="cell-output-display">
