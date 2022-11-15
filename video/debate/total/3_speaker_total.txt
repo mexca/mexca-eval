@@ -1,0 +1,6 @@
+file '/Users/evaviviani/Library/CloudStorage/OneDrive-NetherlandseScienceCenter/mexca/dutch-debate-corpus/shots/batch17/camera shots_Sub_835.mp4'
+file '/Users/evaviviani/Library/CloudStorage/OneDrive-NetherlandseScienceCenter/mexca/dutch-debate-corpus/shots/batch1/camera shots_Sub_49.mp4'
+file '/Users/evaviviani/Library/CloudStorage/OneDrive-NetherlandseScienceCenter/mexca/dutch-debate-corpus/shots/batch6/camera shots_Sub_300.mp4'
+file '/Users/evaviviani/Library/CloudStorage/OneDrive-NetherlandseScienceCenter/mexca/dutch-debate-corpus/shots/batch10/camera shots_Sub_476.mp4'
+file '/Users/evaviviani/Library/CloudStorage/OneDrive-NetherlandseScienceCenter/mexca/dutch-debate-corpus/shots/batch11/camera shots_Sub_515.mp4'
+file '/Users/evaviviani/Library/CloudStorage/OneDrive-NetherlandseScienceCenter/mexca/dutch-debate-corpus/shots/batch3/camera shots_Sub_115.mp4'
