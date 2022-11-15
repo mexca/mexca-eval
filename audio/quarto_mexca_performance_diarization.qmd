@@ -375,4 +375,4 @@ F1 score decreases at longer speaking time.
 
 `Answer`: Yes. Performance decreases for speakers whose speaking time is over \~8 min.
 
-`Conclusion:` Our results suggest that the audio pipeline can be safely used for any number of speaker (up to the tested number of 7) without decreasing in performance, however seems likely to be affected by how long one speaks compared to the others. To be sure though, one needs to analyse also a more balanced dataset (e.g., whereby each speaker speaks the same amount of time).
+`Conclusion:` Our results suggest that the audio pipeline can be used for any number of speaker (up to the tested number of 7) without decreasing in performance, however seems likely to be affected by how long one speaks compared to the others. To be sure though, one needs to analyse also a more balanced dataset (e.g., whereby each speaker speaks the same amount of time).
