@@ -39,7 +39,7 @@ make_wav <- function(number_of_speakers = 2, audio_annotation, max_duration, bal
     wav_file$n_speaker <- number_of_speakers
     wav_file$balanced <- balanced
     
-    write.csv(wav_file, file.path(outfolder, paste0("speaker_", number_of_speakers, "_duration_", max_duration, "_",ifelse(balanced == T, "balanced","unbalanced"), ".csv")))
+    write.csv(wav_file, file.path(outfolder, paste0("speaker_", number_of_speakers, "_duration_", max_duration, "_",ifelse(balanced, "balanced","unbalanced"), ".csv")))
   }
 
   
@@ -51,10 +51,10 @@ split_select_wav <- function(wav_dataset){
   seq_duration <- unique(wav_dataset$max_duration)
   balance <- unique(wav_dataset$balanced)
   
-  dir.create(paste0(ifelse(balance == T, "balanced", "unbalanced")))
+  dir.create(paste0(ifelse(balance, "balanced", "unbalanced")))
   
   for(i in seq_speakers){
-    dir.create(paste0(ifelse(balance == T, "balanced", "unbalanced"), "/Speaker_", i))
+    dir.create(paste0(ifelse(balance, "balanced", "unbalanced"), "/Speaker_", i))
   }
   
   for(x in seq_speakers){
@@ -62,7 +62,7 @@ split_select_wav <- function(wav_dataset){
       wav_subset <- wav_dataset[wav_dataset$max_duration == t & wav_dataset$n_speaker == x,]
       
       wav_subset$n <- 1:nrow(wav_subset)
-      outfolder <- paste0(ifelse(balance == T, "balanced", "unbalanced"), "/Speaker_", x)
+      outfolder <- paste0(ifelse(balance, "balanced", "unbalanced"), "/Speaker_", x)
       
       for(row in wav_subset$n){
         outname <- paste0("Speaker_", wav_subset[wav_subset$n == row,]$name, "_duration_", t)
@@ -80,7 +80,7 @@ split_select_wav <- function(wav_dataset){
 
 concatenate_wav <- function(speakers_names, max_duration, n, balance = T){
   
-  balance_ <- ifelse(balance == T, "balanced", "unbalanced")
+  balance_ <- ifelse(balance, "balanced", "unbalanced")
   
   out_names <- vector(mode = "character")
   for(i in n){
@@ -96,7 +96,7 @@ concatenate_wav <- function(speakers_names, max_duration, n, balance = T){
       speaker_t_files <- paste0("file '", speaker_path, "'")
       
       dir.create("list_audio")
-      dir_out_list <- paste0("list_audio", paste0("/",ifelse(balance == T, "balanced", "unbalanced")))
+      dir_out_list <- paste0("list_audio", paste0("/",ifelse(balance, "balanced", "unbalanced")))
       dir.create(dir_out_list)
       
       out_path <- file.path(getwd(), dir_out_list, paste0("list_audio_",i,"_",t,".txt"))
@@ -107,13 +107,13 @@ concatenate_wav <- function(speakers_names, max_duration, n, balance = T){
   }
   
   dir.create("output_wav")
-  dir_out <- paste0("output_wav", paste0("/",ifelse(balance == T, "balanced", "unbalanced")))
+  dir_out <- paste0("output_wav", paste0("/",ifelse(balance, "balanced", "unbalanced")))
   dir.create(dir_out)
   # concatenate audio
   for(y in out_names){
     temp_y <- str_split(y, .Platform$file.sep, simplify = T)
     char_y <- temp_y[, ncol(temp_y)]
-    out_name <- file.path(dir_out, paste0(substr(char_y,1, nchar(char_y)-4), "_", ifelse(balance == T, "balanced", "unbalanced")))
+    out_name <- file.path(dir_out, paste0(substr(char_y,1, nchar(char_y)-4), "_", ifelse(balance, "balanced", "unbalanced")))
     system(paste0("ffmpeg -f concat -safe 0 -i ", y," -c copy ", out_name,".wav"))
   }
   
