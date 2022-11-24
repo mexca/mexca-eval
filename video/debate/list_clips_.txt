@@ -1,0 +1,9 @@
+/Users/evaviviani/github/mexca-eval/video/debate/total/2_speaker_total.mp4
+/Users/evaviviani/github/mexca-eval/video/debate/total/3_speaker_total.mp4
+/Users/evaviviani/github/mexca-eval/video/debate/total/4_speaker_total.mp4
+/Users/evaviviani/github/mexca-eval/video/debate/total/5_speaker_total.mp4
+/Users/evaviviani/github/mexca-eval/video/debate/total/6_speaker_total.mp4
+/Users/evaviviani/github/mexca-eval/video/debate/total/7_speaker_total.mp4
+/Users/evaviviani/github/mexca-eval/video/debate/total/8_speaker_total.mp4
+/Users/evaviviani/github/mexca-eval/video/debate/total/9_speaker_total.mp4
+/Users/evaviviani/github/mexca-eval/video/debate/total/10_speaker_total.mp4
