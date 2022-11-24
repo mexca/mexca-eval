@@ -3,8 +3,8 @@ title: "Create ad-hoc dataset for mexca evaluation"
 author: "Eva Viviani"
 date: "2022-10-07"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 editor_options:
   chunk_output_type: console
 ---
@@ -57,7 +57,7 @@ source("utils.R")
 I found useful to add the columns `duration` and `end_frame` to the dataframe to manually check that the shots were precise. In order to add those columns, I had to parse the begin_frame column, and compute the duration of each shot.
 
 ```{r}
-camera_shots_annotation$b_frame <- parse_time(camera_shots_annotation)
+camera_shots_annotation$b_frame <- parse_time(begin_frame = camera_shots_annotation$begin_frame)
 ```
 
 ```{r add end_frame column}
@@ -68,20 +68,27 @@ camera_shots_annotation$end_frame <- camera_shots_annotation$b_frame + camera_sh
 Another thing that I found useful to balance the dataset was to add a `frame` column whereby I will store the unique frame identifier of that video. This will be used later on to decide if we want a balanced or unbalanced dataset (i.e., having all faces displayed the same n of frames) and how long the clip must be.
 
 ```{r}
-list_shots <- read.table("list_shots.txt", header = F)
-list_shots$V2<- gtools::mixedsort(list_shots$V1) # re-order the file names based on the last number (to match list_filenames)
+shots_folders <- list.files("/Users/evaviviani/Library/CloudStorage/OneDrive-NetherlandseScienceCenter/mexca/dutch-debate-corpus/shots", full.names = T)
+
+list_shots <- vector()
+for (folder in shots_folders) {
+  list_shots <- c(list_shots, list.files(folder, full.names = T))
+}
+
+list_shots <- gtools::mixedsort(list_shots) # re-order the file names based on the last number (to match list_filenames)
 list_filenames <- unique(camera_shots_annotation$filename)
 
 # how many frames in total across shots
-frames <- vector(mode = 'numeric', length = nrow(list_shots))
-for(x in 1:nrow(list_shots)){
-  frames[x] <- av::av_video_info(list_shots$V2[x])$video[1, c("frames")]
+frames <- vector(mode = 'numeric', length = length(list_shots))
+for (x in seq_len(length(list_shots))) {
+  frames[x] <- av::av_video_info(list_shots[x])$video[1, c("frames")]
 }
 # sum(frames)
 # [1] 155889
 
 camera_shots_annotation$frames <- frames; rm(frames)
 
+write.csv(list_shots, "list_shots.txt", row.names = F, quote = F)
 ```
 
 #### Count by shot_id how many faces are present, and flag in separate columns what type of faces are
@@ -90,7 +97,7 @@ To be able to select the shots based on number of speakers, we need to count how
 
 ```{r count speakers by row, echo=TRUE}
 
-camera_shots_annotation$n_faces <- rowSums(!is.na(camera_shots_annotation[,c("face_1", "face_2", "face_3")]))
+camera_shots_annotation$n_faces <- rowSums(!is.na(camera_shots_annotation[, c("face_1", "face_2", "face_3")]))
 ```
 
 Recall that face_1/2/3 contain a value if one of the faces displayed are known. However, there are instances in which in addition/instead to the face known, there are also other faces (e.g., audience) which will be picked up by the model. We want to be able to filter out those situations by flagging their presence in specific columns. In addition, we want to flag instances where the whole group of known faces was displayed (i.e., groupshot).
@@ -102,8 +109,8 @@ camera_shots_annotation <- camera_shots_annotation |>
   dplyr::mutate(groupshot = ifelse(notes == "groupshot", 1, 0),
                 faces_in_background = ifelse(notes == "faces in background", 1, 0),
                 audience = ifelse(notes == "audience", 1, 0),
-                film = ifelse(notes == "film", 1,0),
-                intro = ifelse(notes == "intro", 1,0))
+                film = ifelse(notes == "film", 1, 0),
+                intro = ifelse(notes == "intro", 1, 0))
 
 ```
 
@@ -114,25 +121,10 @@ head(camera_shots_annotation)
 
 ### Select shots based on number of speakers selected and assemble a clip
 
-From the annotation (i.e., `camera_shots_annotation`) we now create multiple clips. We will run mexca on all those clips and with the data obtained we can answer two questions:
+From the annotation (i.e., `camera_shots_annotation`) we now create multiple clips. We will run mexca on all those clips.
 
-1) "how many speakers the model can recognise when there are X speakers present at the same time?" (i.e., when they are displayed together) -- contemporaries = T
-
-2) "how many speakers the model can recognise when there are X speakers in total?" (i.e., across the whole clip)  -- contemporaries = F
-
-
-We start from (1).
-Note: For (1), we know from the `camera_shots_coding.csv` that the max number of known speakers that are displayed at the same time is 3.
-
-This function below with `contemporaries = T` creates datasets for answering Q1, with number_of_speakers set to 3.
-```{r Q1, eval=FALSE}
-make_clip(number_of_speakers = seq_len(3), camera_shots_annotation, contemporaries = T, n_unique_combination = 1, max_shots = 2)
-```
-
-Function below answers Q2. However, it does by concatenating clips of 1 person, up to n_unique_combination. These unique combinations however are matched in terms of how long each face/speaker is displayed.
 ```{r Q2, eval=FALSE}
-make_clip(number_of_speakers = 1, camera_shots_annotation, contemporaries = F, n_unique_combination = 2:10, max_shots = 2) #note that starting from 1 makes a dataset equivalent to Q1
-
+make_clip(number_of_speakers = 1, camera_shots_annotation, contemporaries = F, n_unique_combination = 1:10, max_shots = 2) 
 ```
 
 Both functions save `.txt` and `.mp4`. The latter ready to be processed by mexca.
