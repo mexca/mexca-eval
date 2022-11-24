@@ -149,7 +149,7 @@ select_most_frequent_faces <- function(df, write = TRUE, list_shots_path = "list
   }
   
   if (write) {
-    list_shots <- read.table(list_shots_path, header = F)
+    list_shots <- read.table(list_shots_path, header = F, sep = "\n")
     faces$abs_path <- vector(mode = "character", length = nrow(faces))
     
     for (x in seq_len(nrow(faces))) {
@@ -184,14 +184,14 @@ make_clip <- function(number_of_speakers = seq_len(3), camera_shots_annotation, 
       # make subsets based on the number of speakers
       subset_n_face <- subset_shots(camera_shots = camera_shots_annotation, n = speaker)
       # Count frequencies of sets of faces displayed per time point and select most frequent face combination
-      final_subset_faces <- select_most_frequent_faces(df = subset_n_face, write = TRUE, list_shots_path = 'list_shots.txt', out_name, n_unique_combinations = n_unique_combination, balanced = F, max_shots)
+      final_subset_faces <- select_most_frequent_faces(df = subset_n_face, write = TRUE, list_shots_path = 'list_shots.txt', out_name, n_unique_combinations = n_unique_combination, balanced = FALSE, max_shots)
       # concatenate the selected shots 
       system(paste0("ffmpeg -f concat -safe 0 -i ", out_name, ".txt -c copy ", out_name, ".mp4"))
       
     }
   }
   
-  if (contemporaries == FALSE) {
+  if (!contemporaries) {
     if (max(n_unique_combination) > 10) {
       stop("Error. number_of_speakers can't be > 10")
     }
