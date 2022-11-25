@@ -1,0 +1,130 @@
+---
+title: "Create ad-hoc dataset for mexca evaluation"
+author: "Eva Viviani"
+date: "2022-10-07"
+output:
+  html_document: default
+  pdf_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+rm(list = ls())
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r seth path, echo=FALSE}
+annotation_folder <- file.path("..","..","data")
+output_folder <- file.path("..","..","datasets")
+```
+
+### Read camera_shots_coding.csv
+
+The file 'camera_shots_coding.csv' contains the annotation of the faces displayed in the video 'ded21_video.mp4'. The video is 1:44:06 min long. 25 fps. It has been cut in shots.
+
+```{r read annotations, echo=TRUE}
+camera_shots_annotation <- read.csv(file.path(annotation_folder, "camera_shots_coding.csv"), 
+                                    header = T, 
+                                    sep = ";", 
+                                    colClasses = c("integer","character","character",
+                                                   "factor","factor","factor","factor",
+                                                   "NULL"),
+                                    na.strings = '')
+camera_shots_annotation <- dplyr::slice(camera_shots_annotation, 1:(dplyr::n() -1 )) # bottom row is completely NA -- I  remove it to match the real size of the df
+```
+
+```{r head of camera shots, echo=TRUE}
+head(camera_shots_annotation)
+```
+
+- **shot_id**: integer column that goes from 1 to 1054. Identify the video shot (group of frames)
+- **filename**: character column linking the shot_id to its name
+- **begin_frame**: time in hours/minutes/seconds/subseconds of the beginning of the frame
+- **face_1/2/3**: factor column with the names of face displayed (if known)
+- **notes**: factor column containing a string describing of what was displayed when it was something/someone else different from face_1/2/3. It could take the following values: intro, film, groupshot, audience, faces in background
+
+In addition to knowing how many people are displayed, we also have the column `begin_frame` which links the shots to the exact point in time in which they start. 
+
+Load custom functions
+```{r}
+source("utils.R")
+```
+
+
+### Reshape `camera_shots_coding.csv` 
+
+I found useful to add the columns `duration` and `end_frame` to the dataframe to manually check that the shots were precise. In order to add those columns, I had to parse the begin_frame column, and compute the duration of each shot.
+
+```{r}
+camera_shots_annotation$b_frame <- parse_time(begin_frame = camera_shots_annotation$begin_frame)
+```
+
+```{r add end_frame column}
+camera_shots_annotation$duration <- compute_time_duration(t1 = camera_shots_annotation[, c("b_frame")])
+camera_shots_annotation$end_frame <- camera_shots_annotation$b_frame + camera_shots_annotation$duration
+```
+
+Another thing that I found useful to balance the dataset was to add a `frame` column whereby I will store the unique frame identifier of that video. This will be used later on to decide if we want a balanced or unbalanced dataset (i.e., having all faces displayed the same n of frames) and how long the clip must be.
+
+```{r}
+shots_folders <- list.files("/Users/evaviviani/Library/CloudStorage/OneDrive-NetherlandseScienceCenter/mexca/dutch-debate-corpus/shots", full.names = T)
+
+list_shots <- vector()
+for (folder in shots_folders) {
+  list_shots <- c(list_shots, list.files(folder, full.names = T))
+}
+
+list_shots <- gtools::mixedsort(list_shots) # re-order the file names based on the last number (to match list_filenames)
+list_filenames <- unique(camera_shots_annotation$filename)
+
+# how many frames in total across shots
+frames <- vector(mode = 'numeric', length = length(list_shots))
+for (x in seq_len(length(list_shots))) {
+  frames[x] <- av::av_video_info(list_shots[x])$video[1, c("frames")]
+}
+# sum(frames)
+# [1] 155889
+
+camera_shots_annotation$frames <- frames; rm(frames)
+
+write.csv(list_shots, "list_shots.txt", row.names = F, quote = F)
+```
+
+#### Count by shot_id how many faces are present, and flag in separate columns what type of faces are
+
+To be able to select the shots based on number of speakers, we need to count how many faces are displayed per shot_id in the face_1/2/3 columns. Note that shot_id equals to the number of rows, thus the use of `rowSums()`.
+
+```{r count speakers by row, echo=TRUE}
+
+camera_shots_annotation$n_faces <- rowSums(!is.na(camera_shots_annotation[, c("face_1", "face_2", "face_3")]))
+```
+
+Recall that face_1/2/3 contain a value if one of the faces displayed are known. However, there are instances in which in addition/instead to the face known, there are also other faces (e.g., audience) which will be picked up by the model. We want to be able to filter out those situations by flagging their presence in specific columns. In addition, we want to flag instances where the whole group of known faces was displayed (i.e., groupshot).
+Note that 'faces in background' are always in addition to what has been noted in the other columns, and not mutually exclusive.
+
+```{r unpack notes column, echo=TRUE}
+
+camera_shots_annotation <- camera_shots_annotation |>
+  dplyr::mutate(groupshot = ifelse(notes == "groupshot", 1, 0),
+                faces_in_background = ifelse(notes == "faces in background", 1, 0),
+                audience = ifelse(notes == "audience", 1, 0),
+                film = ifelse(notes == "film", 1, 0),
+                intro = ifelse(notes == "intro", 1, 0))
+
+```
+
+This is our final dataframe: 
+```{r}
+head(camera_shots_annotation)
+```
+
+### Select shots based on number of speakers selected and assemble a clip
+
+From the annotation (i.e., `camera_shots_annotation`) we now create multiple clips. We will run mexca on all those clips.
+
+```{r Q2, eval=FALSE}
+make_clip(number_of_speakers = 1, camera_shots_annotation, contemporaries = F, n_unique_combination = 1:10, max_shots = 2) 
+```
+
+Both functions save `.txt` and `.mp4`. The latter ready to be processed by mexca.

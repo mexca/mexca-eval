@@ -1,0 +1,19 @@
+This folder contains all the necessary scripts and output files used to evaluate the video subcomponent of Mexca. Note that for copyright reasons the clips used to evaluate mexca cannot be store on github. These are stored on on the escience's Onedrive secured with 2-steps verification. 
+
+Notebooks relevant for replicating the analyses:
+
+1) `create_dataset.Rmd`, R markdown notebook containing the script to cut and concatenate clips* based on the features selected (e.g., number of unique faces, time displayed on frame). 
+2) `mexca_run.ipynb`, jupyter notebook running mexca on the clips made in (1)
+3) `quarto_mexca_performance_video.qmd`, quarto notebook for the evaluation of mexca's performance. Rendered version ready for visualization is `quarto_mexca_performance_video.html`.
+
+As per the same reasons mentioned above, we can't share publicly the videos made within notebook (1) and that notebook (2) uses. However, notebook (3) which contains the final evaluation and thus it's the most informative can be run without the aid of notebooks (1) and (2), as it loads anonimised .csv files that are mexca's output. In addition, this folder contains its .html rendered version, which does not require any run.
+
+Files necessary to run the notebooks:
+
+- `camera_shots_annotation.csv`, annotations provided by the project partner of faces displayed per shot
+- `list_shots.txt`, list of shots with their absolute paths 
+- `list_clips_.txt`, list of clips made from notebook (1)**
+- `total` folder stores `.txt` files and `.mp4` files returned from notebook (1) and ready to be processed by notebook (2)
+- `output\with_n_clusters\` folder contains mexca's outputs as `.csv` and ready to be processed by notebook (3)
+- `quarto_mexca_performance_video` folder contains files necessary to render the `.html` version of notebook (3). 
+- `utils.R`, R script which loads all the custom-made functions to run the analyses

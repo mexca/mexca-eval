@@ -1,0 +1,4 @@
+SPEAKER_00 Klaver list_audio_4_600_unbalanced
+SPEAKER_01 Kaag list_audio_4_600_unbalanced
+SPEAKER_02 Burger list_audio_4_600_unbalanced
+SPEAKER_03 Hoekstra list_audio_4_600_unbalanced

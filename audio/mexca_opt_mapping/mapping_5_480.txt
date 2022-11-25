@@ -1,0 +1,5 @@
+SPEAKER_00 Wilders list_audio_5_480_unbalanced
+SPEAKER_01 Hoekstra list_audio_5_480_unbalanced
+SPEAKER_02 Klaver list_audio_5_480_unbalanced
+SPEAKER_03 Burger list_audio_5_480_unbalanced
+SPEAKER_04 Marijnissen list_audio_5_480_unbalanced
