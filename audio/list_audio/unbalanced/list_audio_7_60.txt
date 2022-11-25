@@ -1,7 +1,0 @@
-file '/Users/evaviviani/github/mexca-eval/audio/unbalanced/Speaker_7/Speaker_Hoekstra_duration_60_1.wav'
-file '/Users/evaviviani/github/mexca-eval/audio/unbalanced/Speaker_7/Speaker_Kaag_duration_60_2.wav'
-file '/Users/evaviviani/github/mexca-eval/audio/unbalanced/Speaker_7/Speaker_Klaver_duration_60_3.wav'
-file '/Users/evaviviani/github/mexca-eval/audio/unbalanced/Speaker_7/Speaker_Marijnissen_duration_60_4.wav'
-file '/Users/evaviviani/github/mexca-eval/audio/unbalanced/Speaker_7/Speaker_Rutte_duration_60_5.wav'
-file '/Users/evaviviani/github/mexca-eval/audio/unbalanced/Speaker_7/Speaker_Wilders_duration_60_6.wav'
-file '/Users/evaviviani/github/mexca-eval/audio/unbalanced/Speaker_7/Speaker_Burger_duration_60_7.wav'
