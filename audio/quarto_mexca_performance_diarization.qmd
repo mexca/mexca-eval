@@ -6,7 +6,7 @@ editor_options:
   chunk_output_type: inline
 ---
 
-Mexca's video subcomponent is based on [Pyannote.audio 2.0](https://github.com/pyannote/pyannote-audio). An open-source toolkit written in Python for speaker diarization. Pyannote.audio is based on PyTorch machine learning framework, and it comes with [pre-trained models](https://huggingface.co/pyannote/speaker-diarization) for speaker diarization, which we have used here.
+Mexca's audio subcomponent is based on [Pyannote.audio 2.0](https://github.com/pyannote/pyannote-audio). An open-source toolkit written in Python for speaker diarization. Pyannote.audio is based on PyTorch machine learning framework, and it comes with [pre-trained models](https://huggingface.co/pyannote/speaker-diarization) for speaker diarization, which we have used here.
 
 In this notebook, we evaluate mexca/Pyannote performance on speaker diarization (who speaks when). We aim at answering the following questions:
 
@@ -51,32 +51,42 @@ For example, in this file we have 7 speakers, and the max duration for the speak
 
 ```{r}
 #| echo: false
-
 example_dataset <- data.frame(
-  speakers = as.factor(c("Hoekstra", "Kaag", "Klaver", "Marijnissen", "Rutte", "Wilders", "Burger")),
+  speakers = as.factor(
+    c("Hoekstra", "Kaag", "Klaver", "Marijnissen", "Rutte", "Wilders", "Burger")
+  ),
   max_duration = c(577, 311, 136, 93, 32, 34, 16)
 )
 
-example_dataset$speakers <- factor(example_dataset$speakers, levels = c("Hoekstra", "Kaag", "Klaver", "Marijnissen", "Rutte", "Wilders", "Burger"))
+example_dataset$speakers <- factor(
+  example_dataset$speakers,
+  levels = c("Hoekstra", "Kaag", "Klaver", "Marijnissen", "Rutte", "Wilders", "Burger")
+                                   )
 
-ggplot(example_dataset, aes(x=speakers, y=max_duration)) + 
-            geom_bar(aes(y = max_duration),stat="identity", fill = "grey80", colour="black",  width=0.5) +
-            ylab("time (s)")+
-            xlab("")+
-            theme(panel.border=element_blank(),
-                  panel.grid.major=element_blank(),
-                  panel.grid.minor=element_blank(),
-                  plot.background=element_blank(),
-                  axis.text.y = element_text(size = 20),
-                  axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size = 15),
-                  axis.line.y =  element_line(linetype=1),
-                  axis.ticks.y = element_line(),
-                  axis.ticks.length.y = unit(.2, "cm"),
-                  axis.ticks.x = element_blank(),
-                  plot.title = element_text(size = 30),
-                  axis.title.y=element_text(size=20),
-                  strip.text = element_text(size = 20),
-                  strip.background = element_rect(colour="black", size=1))
+ggplot(example_dataset, aes(x = speakers, y = max_duration)) +
+  geom_bar(aes(y = max_duration), 
+           stat ="identity", 
+           fill = "grey80", 
+           colour = "black",  
+           width = 0.5) +
+  ylab("time (s)") +
+  xlab("") +
+  theme(panel.border = 
+        element_blank(),
+        panel.grid.major=element_blank(),
+        panel.grid.minor=element_blank(),
+        plot.background=element_blank(),
+        axis.text.y = element_text(size = 20),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 15),
+        axis.line.y =  element_line(linetype = 1),
+        axis.ticks.y = element_line(),
+        axis.ticks.length.y = unit(.2, "cm"),
+        axis.ticks.x = element_blank(),
+        plot.title = element_text(size = 30),
+        axis.title.y=element_text(size = 20),
+        strip.text = element_text(size = 20),
+        strip.background = element_rect(colour="black", size = 1)
+        )
 ```
 
 Here we have the opposite extreme: 2 speakers, max duration \~40s
@@ -89,41 +99,62 @@ example_dataset <- data.frame(
   max_duration = c(33, 30)
 )
 
-example_dataset$speakers <- factor(example_dataset$speakers, levels = c("Kaag", "Hoekstra"))
+example_dataset$speakers <- factor(
+  example_dataset$speakers, levels = c("Kaag", "Hoekstra")
+  )
 
-ggplot(example_dataset, aes(x=speakers, y=max_duration)) + 
-            geom_bar(aes(y = max_duration),stat="identity", fill = "grey80", colour="black",  width=0.5) +
-            ylab("time (s)")+
-            xlab("")+
-            theme(panel.border=element_blank(),
-                  panel.grid.major=element_blank(),
-                  panel.grid.minor=element_blank(),
-                  plot.background=element_blank(),
-                  axis.text.y = element_text(size = 20),
-                  axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size = 15),
-                  axis.line.y =  element_line(linetype=1),
-                  axis.ticks.y = element_line(),
-                  axis.ticks.length.y = unit(.2, "cm"),
-                  axis.ticks.x = element_blank(),
-                  plot.title = element_text(size = 30),
-                  axis.title.y=element_text(size=20),
-                  strip.text = element_text(size = 20),
-                  strip.background = element_rect(colour="black", size=1))
+ggplot(example_dataset, aes(x=speakers, y=max_duration)) +
+  geom_bar(aes(y = max_duration), 
+           stat = "identity", 
+           fill = "grey80", 
+           colour ="black",  
+           width = 0.5) +
+  ylab("time (s)") +
+  xlab("") +
+  theme(panel.border = element_blank(),
+        panel.grid.major=element_blank(),
+        panel.grid.minor=element_blank(),
+        plot.background=element_blank(),
+        axis.text.y = element_text(size = 20),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 15),
+        axis.line.y = element_line(linetype = 1),
+        axis.ticks.y = element_line(),
+        axis.ticks.length.y = unit(.2, "cm"),
+        axis.ticks.x = element_blank(),
+        plot.title = element_text(size = 30),
+        axis.title.y=element_text(size = 20),
+        strip.text = element_text(size = 20),
+        strip.background = element_rect(colour = "black", size = 1)
+        )
 ```
 
 ## Read mexca's output
 
 ```{r}
 df <- list.files(file.path("output_mexca")) 
-
-ded21 <- do.call(bind_rows, lapply(file.path("output_mexca", df), read.table, stringsAsFactors = T, header = F, sep = " ", dec = "."))
+ded21 <- do.call(bind_rows, 
+                 lapply(file.path("output_mexca", df), 
+                        read.table, 
+                        stringsAsFactors = TRUE, 
+                        header = FALSE, 
+                        sep = " ", 
+                        dec = ".")
+                 )
 ded21$V10 <- NULL
 
 colnames <- c("type", "file", "chnl", "tbeg", "tdur", 
               "ortho", "stype", "name", "conf")
 names(ded21) <- colnames
-ded21$max_duration <- as.integer(str_split(pattern = "_", ded21$file, simplify = T)[,4])
-ded21$n_speaker <- as.integer(str_split(pattern = "_", ded21$file, simplify = T)[,3])
+ded21$max_duration <- as.integer(
+  str_split(pattern = "_", 
+            ded21$file, 
+            simplify = TRUE)[, 4]
+  )
+ded21$n_speaker <- as.integer(
+  str_split(pattern = "_", 
+            ded21$file, 
+            simplify = TRUE)[,3]
+  )
 
 head(ded21)
 ```
@@ -131,9 +162,9 @@ head(ded21)
 ## Load reference
 
 ```{r}
-ref_ded21 <- read.csv("unbalanced_dataset.csv", header = T, stringsAsFactors = T)
-# filter out n_speaker == 1 as diarization can't work with 1 speaker
-ref_ded21 <- ref_ded21[ref_ded21$n_speaker != 1,]
+ref_ded21 <- read.csv("unbalanced_dataset.csv", header = TRUE, stringsAsFactors = TRUE)
+# filter out `n_speaker == 1` as diarization can't work with 1 speaker
+ref_ded21 <- ref_ded21[ref_ded21$n_speaker != 1, ]
 head(ref_ded21)
 ```
 
@@ -148,24 +179,22 @@ max_duration <- unique(ref_ded21$max_duration)
 ref_ded21_corpus <- ref_ded21
 reference_ded21_for_pyannote <- NULL
 
-for (n in n_speaker){
-  for(t in max_duration){
+for (n in n_speaker) {
+  for (t in max_duration) {
     # set first tbeg to 0
     
     ref_ded21_corpus_temp <- ref_ded21_corpus |> 
       filter(n_speaker == n & max_duration == t) 
-    
    ref_ded21_corpus_temp <- ref_ded21_corpus_temp |> 
       mutate(tbeg = replace(tbeg, 1, 0))
     
     nrow_ref <- nrow(ref_ded21_corpus_temp)
 
-    for(x in 2:nrow_ref) {
+    for (x in 2:nrow_ref) {
       # set tbeg from 2 row onwards tdur of the row before, i.e., tdur[x-1]
-      ref_ded21_corpus_temp[x,]$tbeg <- sum(ref_ded21_corpus_temp[x-1,]$tbeg,
-                                            ref_ded21_corpus_temp[x-1,]$tdur) 
+      ref_ded21_corpus_temp[x, ]$tbeg <- sum(ref_ded21_corpus_temp[x - 1, ]$tbeg,
+                                             ref_ded21_corpus_temp[x - 1, ]$tdur) 
     }
-    
     reference_ded21_for_pyannote <- bind_rows(reference_ded21_for_pyannote,
                                               ref_ded21_corpus_temp)
   }
@@ -180,13 +209,36 @@ Mapping between mexca's and reference's labels is obtained by using pyannote's o
 ```{r}
 df <- list.files(file.path("mexca_opt_mapping"))
 
-opt_mapping <- do.call(bind_rows, lapply(file.path("mexca_opt_mapping", df), read.table, stringsAsFactors = T, header = F, sep = " ", dec = "."))
+opt_mapping <- do.call(
+  bind_rows, 
+  lapply(file.path("mexca_opt_mapping", df),
+         read.table, 
+         stringsAsFactors = TRUE, 
+         header = FALSE, 
+         sep = " ", 
+         dec = "."
+         )
+  )
 names(opt_mapping) <- c("pyannote_name", "mapped_reference", "file")
-opt_mapping$n_speaker <- as.integer(str_split(opt_mapping$file,"_", simplify = T)[,3])
-opt_mapping$max_duration <- as.integer(str_split(opt_mapping$file,"_", simplify = T)[,4])
+opt_mapping$n_speaker <- as.integer(
+  str_split(
+    opt_mapping$file, 
+    "_", 
+    simplify = TRUE)[, 3]
+  )
+
+opt_mapping$max_duration <- as.integer(
+  str_split(opt_mapping$file, 
+            "_", 
+            simplify = TRUE)[, 4]
+  )
 
 names(ded21)[names(ded21) == "name"] <- "pyannote_name"
-optimal_ded21 <- left_join(ded21, opt_mapping, by = c("file","pyannote_name", "max_duration", "n_speaker"))
+optimal_ded21 <- left_join(
+  ded21, 
+  opt_mapping, 
+  by = c("file", "pyannote_name", "max_duration", "n_speaker")
+  )
 head(optimal_ded21)
 
 ```
@@ -197,72 +249,105 @@ Now that we have the `mapped_reference` column, we can count how many times (in 
 
 ```{r}
 # initialise file for plotting and matrix for storing confusion matrices
-my2Dlist <- as.list(1:(length(n_speaker) * length(max_duration)))
-dim(my2Dlist) <- c(length(n_speaker),length(max_duration))
+my2Dlist <- as.list(
+  seq_len(
+    length(n_speaker) * length(max_duration)
+  )
+)
+dim(my2Dlist) <- c(
+  length(n_speaker), 
+  length(max_duration)
+  )
 
-my_confusion_2d <- as.list(1:(length(n_speaker) * length(max_duration)))
-dim(my_confusion_2d) <- c(length(n_speaker),length(max_duration))
+my_confusion_2d <- as.list(
+  seq_len(
+    length(n_speaker) * length(max_duration)
+  )
+)
+dim(my_confusion_2d) <- c(length(n_speaker), length(max_duration))
 ```
 
 ```{r}
-
-for(i in 1:length(n_speaker)){
+for (i in seq_len(length(n_speaker))) {
   n <- n_speaker[i]
-  for(j in 1:length(max_duration)){
+  for (j in seq_len(length(max_duration))) {
     t <- max_duration[j]
     
     speaker_ref_segments <- droplevels(
-      reference_ded21_for_pyannote[reference_ded21_for_pyannote$n_speaker == n & reference_ded21_for_pyannote$max_duration == t,]
+      reference_ded21_for_pyannote[
+        reference_ded21_for_pyannote$n_speaker == n &
+        reference_ded21_for_pyannote$max_duration == t, 
+        ]
     )
     
-    speaker_pred_segments <- na.omit(droplevels(optimal_ded21[optimal_ded21$n_speaker == n & optimal_ded21$max_duration == t,]))
+    speaker_pred_segments <- na.omit(
+      droplevels(
+        optimal_ded21[
+          optimal_ded21$n_speaker == n & 
+          optimal_ded21$max_duration == t, 
+          ]
+        )
+      )
     
     reference_speakers <- unique(speaker_ref_segments$name)
-    confusion_matrix <- as.matrix(table(levels(reference_speakers), 
-                                        levels(reference_speakers)))
+    confusion_matrix <- as.matrix(
+      table(
+        levels(reference_speakers), 
+        levels(reference_speakers)
+        )
+      )
     
-    for (ref_speaker1 in reference_speakers){
-      sub_speaker_ref1 <- speaker_ref_segments[speaker_ref_segments$name == ref_speaker1,]
+    for (ref_speaker1 in reference_speakers) {
+      sub_speaker_ref1 <- speaker_ref_segments[
+        speaker_ref_segments$name == ref_speaker1, 
+        ]
       
-      sub_speaker_pred1 <- speaker_pred_segments[speaker_pred_segments$mapped_reference == ref_speaker1,]
+      sub_speaker_pred1 <- speaker_pred_segments[
+        speaker_pred_segments$mapped_reference == ref_speaker1, 
+        ]
       
-      for(ref_speaker2 in reference_speakers){
-        sub_speaker_ref2 <- speaker_ref_segments[speaker_ref_segments$name == ref_speaker2,]
+      for (ref_speaker2 in reference_speakers) {
+        sub_speaker_ref2 <- speaker_ref_segments[
+          speaker_ref_segments$name == ref_speaker2, 
+          ]
         
-        sub_speaker_pred2 <- speaker_pred_segments[speaker_pred_segments$mapped_reference == ref_speaker2,]
+        sub_speaker_pred2 <- speaker_pred_segments[
+          speaker_pred_segments$mapped_reference == ref_speaker2,
+          ]
         
         # compute speech segments overlap (in seconds) between mexca and the reference
-        confusion_matrix[ref_speaker1,ref_speaker2] <- calculate_overlap(sub_speaker_ref1, sub_speaker_pred2)
-        
-      }
+        confusion_matrix[ref_speaker1, ref_speaker2] <- calculate_overlap(sub_speaker_ref1, sub_speaker_pred2)
+        }
       
       # store matrix 
-      my_confusion_2d[[i,j]] <- confusion_matrix
+      my_confusion_2d[[i, j]] <- confusion_matrix
       
       # store plot 
-      my2Dlist[[i,j]] <- confusion_matrix|>
+      my2Dlist[[i, j]] <- confusion_matrix|>
         as.data.frame()|>
-        ggplot(ggplot2::aes(Var1, Var2, fill = Freq)) +
+        ggplot(aes(Var1, Var2, fill = Freq)) +
         geom_tile(
           colour = "white",
           lwd = 0.1,
           linetype = 1) +
-        geom_text(aes(label = round(Freq,1))) +
-        scale_fill_gradient(low="white", high="#009194")+
-        coord_fixed()+
-        guides(fill = guide_colourbar(title = "seconds"))+
-        ylab("True speaker label")+
-        xlab("Predicted speaker label")+
-        labs(title = paste0("n = ", n, " max duration = ", max(confusion_matrix), "s" ),
-             caption="Dutch debate dataset 2021")+
-        theme(legend.position="right")
-      
-      
+        geom_text(aes(label = round(Freq, 1))) +
+        scale_fill_gradient(low = "white", high = "#009194") +
+        coord_fixed() +
+        guides(fill = guide_colourbar(title = "seconds")) +
+        ylab("True speaker label") +
+        xlab("Predicted speaker label") +
+        labs(title = paste0(
+          "n = ", 
+          n, 
+          " max duration = ", 
+          max(confusion_matrix), 
+          "s" 
+          ), 
+        caption = "Dutch debate dataset 2021") +
+        theme(legend.position = "right")
     }
   }
 }
-
-
 ```
 
 At this point we're ready to compute the f1 score for each speaker, in each dataset, and store it in the `F1_total` dataframe.
@@ -270,36 +355,45 @@ At this point we're ready to compute the f1 score for each speaker, in each data
 ```{r}
 F1_total <- data.frame()
 
-for(i in 1:nrow(my_confusion_2d)){ #n of speakers
-  for(j in 1:ncol(my_confusion_2d)){ # max_duration
+for (i in seq_len(nrow(my_confusion_2d))) { #nrows = n of speakers
+  for (j in seq_len(ncol(my_confusion_2d))) { #ncols = max_duration
     
     n <- n_speaker[i]
     t <- max_duration[j]
     
-    speaker_ref_segments <- droplevels(reference_ded21_for_pyannote[reference_ded21_for_pyannote$n_speaker == n & reference_ded21_for_pyannote$max_duration == t,])
+    speaker_ref_segments <- droplevels(
+      reference_ded21_for_pyannote[
+        reference_ded21_for_pyannote$n_speaker == n &
+        reference_ded21_for_pyannote$max_duration == t, 
+        ]
+      )
     
-    confusion_matrix <- my_confusion_2d[[i,j]]
+    confusion_matrix <- my_confusion_2d[[i, j]]
     reference_speakers <- colnames(confusion_matrix)
     
-    F1 = data.frame(
+    F1 <- data.frame(
       speakers = reference_speakers,
       max_duration = NA,
       f1_score = NA,
+      precision = NA,
+      recall = NA,
       n_speakers = n,
       file = t
       
     )
     
     for (k in reference_speakers){
-        F1[F1$speakers==k,]$f1_score <- compute_f1(confusion_matrix, k)
-    
+        F1[F1$speakers==k, ]$f1_score <- compute_f1(confusion_matrix, k)
+        F1[F1$speakers==k, ]$recall <- compute_recall(confusion_matrix, k)
+        F1[F1$speakers==k, ]$precision <- compute_precision(confusion_matrix, k)
         # append speakers' individual max duration
-        F1[F1$speakers==k,]$max_duration <- sum(speaker_ref_segments[speaker_ref_segments$name == k,]$tdur)
-
+        F1[F1$speakers==k, ]$max_duration <- sum(
+          speaker_ref_segments[
+            speaker_ref_segments$name == k, 
+          ]$tdur
+        )
     }
-    
     F1_total <- bind_rows(F1_total, F1)
-
   }
 }
 ```
@@ -314,14 +408,14 @@ F1 score as a function of the number of speakers. Each dot is a speaker with its
 
 ```{r, warning=FALSE}
 
-ggplot(F1_total, aes(as.factor(n_speakers), f1_score))+
-  geom_violin(fill = "lightgray", col = NA)+
-  geom_sina(shape = 21, size = 2)+
-  scale_y_continuous(breaks=seq(0, 1, 0.2), limits=c(0, 1))+
-  ylab("f1 score")+
-  xlab("number of people talking in total")+
-  theme_classic()+
-  stat_summary(fun.data="mean_cl_boot", color="red")
+ggplot(F1_total, aes(as.factor(n_speakers), f1_score)) +
+  geom_violin(fill = "lightgray", col = NA) +
+  geom_sina(shape = 21, size = 2) +
+  scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
+  ylab("f1 score") +
+  xlab("number of people talking in total") +
+  theme_classic() +
+  stat_summary(fun.data = "mean_cl_boot", color = "red")
 ```
 
 We can see that the performance is very high, and it looks constant across `n` except for some instances (10 speakers/datapoints).
@@ -335,11 +429,11 @@ ggplot(F1_total, aes(as.factor(speakers), f1_score)) +
   ylab("f1 score") +
   xlab("speaker") +
   theme_classic() +
-  stat_summary(fun.data="mean_cl_boot", color="red")
+  stat_summary(fun.data = "mean_cl_boot", color = "red")
 
 ```
 
-It is evident that the poor performance in those datapoints can be easily attributed to two speakers (Klaver and Wilders) and for 1 instance in Burger. Apart from Burger (that it might be just bad luck), this plot suggests that f1_score seems to be influenced more by the singular features of the speakers rather than the total number of speakers.
+It is evident that the poor performance in those datapoints can be easily attributed to two speakers (Klaver and Wilders) and for 1 instance in Burger. Apart from Burger (which has only one data point laying below .5 -- i.e., it might be just a coincidence), this plot suggests that f1_score seems to be influenced more by the singular features of the speakers rather than the total number of speakers.
 
 Let's look now at whether speaking time has any influence:
 
@@ -359,11 +453,11 @@ F1 score decreases at longer speaking time.
 
 ```{r, figures-side, fig.ncol = 3, out.height="300px"}
 
- for(i in 1:length(n_speaker)){
-   for(x in 1:length(max_duration)){
-     print(my2Dlist[[i,x]])
-   }
- }
+for (i in seq_len(length(n_speaker))) {
+  for (x in seq_len(length(max_duration))) {
+    print(my2Dlist[[i, x]])
+  }
+}
 
 ```
 
@@ -376,3 +470,29 @@ F1 score decreases at longer speaking time.
 `Answer`: Yes. Performance decreases for speakers whose speaking time is over \~8 min.
 
 `Conclusion:` Our results suggest that the audio pipeline can be used for any number of speaker (up to the tested number of 7) without decreasing in performance, however seems likely to be affected by how long one speaks compared to the others. To be sure though, one needs to analyse also a more balanced dataset (e.g., whereby each speaker speaks the same amount of time).
+
+#### Extra Figures
+
+##### Precision
+
+```{r}
+ggplot(F1_total, aes(as.factor(speakers), precision)) +
+  geom_violin(fill = "lightgray", col = NA) +
+  geom_sina(shape = 21, size = 2) +
+  ylab("precision") +
+  xlab("speaker") +
+  theme_classic() +
+  stat_summary(fun.data = "mean_cl_boot", color = "red")
+```
+
+##### Recall
+
+```{r}
+ggplot(F1_total, aes(as.factor(speakers), recall)) +
+  geom_violin(fill = "lightgray", col = NA) +
+  geom_sina(shape = 21, size = 2) +
+  ylab("recall") +
+  xlab("speaker") +
+  theme_classic() +
+  stat_summary(fun.data = "mean_cl_boot", color = "red")
+```
