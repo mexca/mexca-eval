@@ -1,0 +1,16 @@
+This folder contains scripts and files necessary to replicate the evaluation of the performance of the mexca's audio submodule. Note that for copyright reasons the audio files used to evaluate mexca's audio pipeline cannot be store on github. These are stored on on the escience's Onedrive secured with 2-steps verification. 
+
+Notebooks relevant for replicating the analyses:
+
+1) create_dataset.Rmd, R markdown notebook that selects, cuts, concatenates and saves audio files (.wav) based on total number of speakers, unique speaker's speaking duration
+2) mexca_run.ipynb, Python notebook that runs the mexca's audio pipeline on the audio files made in (1). Note that contains also the steps to obtain the optimal mapping.
+3) quarto_mexca_performance_diarization.qmd, Quarto notebook that takes the ouput of mexca's audio pipeline in (2) and evaluates the performance. Quarto_mexca_performance_diarization.html is the rendered version of this notebook.
+
+As per the same reasons mentioned above, we can't share publicly the audios made within notebook (1) and that notebook (2) uses to run the audio pipeline. However, notebook (3) which contains the final evaluation and thus it's the most informative can be run without the aid of notebooks (1) and (2), as it loads anonimised .csv files that are the results of the run of notebook (2). In addition, this folder contains its .html rendered version, which does not require any run.
+
+Files needed to run the notebooks:
+- `ref_ded21_audio_0.rttm` and `ref_ded21_audio_1.rttm`, reference rttms files containing the annotations provided by the project partner
+- `unbalanced_dataset.csv`, csv file containing the final unbalanced dataset used for the analyses
+- `\mexca_optimal_mapping\` folder containing the optimal mapping between the reference's and the model's labels
+- `\output_mexca\` folder containing all the .rttm files of the model's ouput and the reference 
+- `audio_utils.R`, R script which loads all the custom-made functions to run the analyses

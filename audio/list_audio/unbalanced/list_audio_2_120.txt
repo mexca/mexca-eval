@@ -1,0 +1,5 @@
+file '/Users/evaviviani/github/mexca-eval/audio/unbalanced/Speaker_2/Speaker_Hoekstra_duration_120_1.wav'
+file '/Users/evaviviani/github/mexca-eval/audio/unbalanced/Speaker_2/Speaker_Hoekstra_duration_120_2.wav'
+file '/Users/evaviviani/github/mexca-eval/audio/unbalanced/Speaker_2/Speaker_Hoekstra_duration_120_3.wav'
+file '/Users/evaviviani/github/mexca-eval/audio/unbalanced/Speaker_2/Speaker_Hoekstra_duration_120_4.wav'
+file '/Users/evaviviani/github/mexca-eval/audio/unbalanced/Speaker_2/Speaker_Klaver_duration_120_5.wav'
